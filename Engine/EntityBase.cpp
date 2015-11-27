@@ -129,17 +129,21 @@ void EntityBase::BuildBoundingSphere()
 	{
 		
 		Mesh * mesh = model->GetMeshAt(i).Get();
-		Vector3 * pos = mesh->GetPoistions();
+		
+		void * vertData = mesh->Read();
+		int stride = mesh->GetStride();
 
 		for(int i = 0;i < mesh->GetNumberOfVerts();i++)
 		{
-			float rad = std::sqrt(pos[i].x * pos[i].x + pos[i].y * pos[i].y + pos[i].z + pos[i].z);
+			Vector3 * pos = (Vector3*)((unsigned int)vertData + i * stride);
+			float rad = std::sqrt(pos->x * pos->x + pos->y * pos->y + pos->z + pos->z);
 			if(rad > maxRadius)
 			{
 				maxRadius = rad;
 			}
 		}
 
+		mesh->EndRead();
 	}
 
 	sphere.radius = maxRadius;

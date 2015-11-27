@@ -6,7 +6,6 @@
 
 
 class EXPORT DeviceDependableFactory;
-class EXPORT CameraData;
 
 class EXPORT TransformationBindingSection : public IEffectBindingSection
 {

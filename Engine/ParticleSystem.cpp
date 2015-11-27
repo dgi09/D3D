@@ -48,7 +48,8 @@ void ParticleSystem::Draw(ParticleSystemEffectBinder * binder)
 		binder->FillParticleData(gpuData,sizeof(gpuData));
 		binder->Bind();
 
-		quad.Get()->DrawInstanced(liveParticles);
+		quad.Get()->SetDrawMethod(DM_DRAW | DM_DRAW_INSTANCED);
+		quad.Get()->Draw(liveParticles);
 	}
 
 }

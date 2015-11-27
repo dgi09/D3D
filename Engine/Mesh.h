@@ -6,11 +6,21 @@
 #include "Vector3.h"
 #include "Constants.h"
 
+enum EXPORT DrawMethod
+{
+	DM_DRAW = 1,
+	DM_DRAW_INDEXED = DM_DRAW << 1,
+	DM_DRAW_INSTANCED = DM_DRAW_INDEXED << 1
+};
+
+
 class EXPORT Mesh : public DeviceDependable , public IDestroyable
 {
 	
 	ID3D11Buffer * vertexBuffer;
 	ID3D11Buffer * indexBuffer;
+
+	ID3D11Buffer * staging;
 
 	unsigned int numberOfVerts;
 	unsigned int numberOfIndecies;
@@ -18,26 +28,27 @@ class EXPORT Mesh : public DeviceDependable , public IDestroyable
 
 	D3D11_PRIMITIVE_TOPOLOGY topology;
 
-	Vector3 positionsBuffer[MAX_VERTS];
+	unsigned int drawFlag;
 public:
 	void Init();
 	void Destroy();
 
-	void Draw();
-	void DrawIndexed();
-	void DrawInstanced(unsigned int numberOfInstanes);
+	void Draw(unsigned int numberOfInstances = 0);
 	
 
 	void InitVertexBuffer(unsigned int dataSize, unsigned int stride,void * data);
 	void InitIndexBuffer(unsigned int numberIndecies,unsigned int * data);
-	void InitPositionBuffer(Vector3 * buffer);
+	
 	void SetPrimitveTopology(D3D11_PRIMITIVE_TOPOLOGY topology);
+	void SetDrawMethod(unsigned int drawFlag);
 
 	Vector3 * GetPoistions();
 
 
 	int GetNumberOfVerts();
-	void * LockVerts();
-	void UnlockVerts();
+	int GetStride();
+
+	void * Read();
+	void EndRead();
 };
 

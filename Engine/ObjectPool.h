@@ -58,9 +58,9 @@ void ObjectPool<T>::Resize(unsigned int size)
 	T * memTemp = new T[size];
 	bool * usedTemp = new bool[size];
 
-	for(int i = 0; i < size;i++)
+	for (unsigned int i = 0; i < size; i++)
 	{
-		if(i < this->size)
+		if (i < this->size)
 			usedTemp[i] = true;
 		else usedTemp[i] = false;
 	}
@@ -94,7 +94,7 @@ unsigned int ObjectPool<T>::New()
 	if(allocatedObjects == size)
 		Resize(size * 2);
 
-	for(int i = 0 ;i < size;i++)
+	for (unsigned int i = 0; i < size; i++)
 	{
 		if(used[i] == false)
 		{

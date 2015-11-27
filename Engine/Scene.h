@@ -29,6 +29,9 @@
 #include "ToneMapper.h"
 #include "ParticleSystem.h"
 #include "ParticleSystemEffectBinder.h"
+#include "ModelCreator.h"
+#include "Billboard.h"
+#include "BillboardEffectBinder.h"
 
 
 class EXPORT DeviceDependableFactory;
@@ -43,6 +46,7 @@ class EXPORT StaticMeshData;
 #define DirectionalLightPtr SceneObjectPtr<DirectionalLight>
 #define PointLightPtr SceneObjectPtr<PointLight>
 #define ParticleSystemPtr SceneObjectPtr<ParticleSystem>
+#define BillboardPtr SceneObjectPtr<Billboard>
 
 
 #define BLUR_AGGRESSION 4
@@ -52,7 +56,6 @@ class EXPORT Scene
 
 	SceneDXData dxData;
 	ID3D11DepthStencilState * normalDepthState;
-
 	GBuffer gBuffer;
 
 	struct WorldRecData
@@ -78,12 +81,12 @@ class EXPORT Scene
 	std::vector<StaticEntityPtr> staticEntites;
 	std::vector<AnimatedEntityPtr> animatedEntities;
 	std::vector<ParticleSystemPtr> particleSystems;
-
+	std::vector<BillboardPtr> billboards;
 
 	ObjectPool<AnimatedEntity> animatedEntitiesPool;
 	ObjectPool<StaticEntity> staticEntitiesPool;
 	ObjectPool<ParticleSystem> particleSystemsPool;
-
+	ObjectPool<Billboard> billboardsPool;
 
 	SceneShaderData shaderData;
 
@@ -128,9 +131,14 @@ class EXPORT Scene
 	TexturePtr nontransperantFinalColor;
 	TexturePtr particlesFinalColor;
 
-	MeshPtr particleQuad;
+	MeshPtr bilboardQuad;
 	Effect particleSystemEffect;
+	Effect billboardEffect;
+
+
 	ParticleSystemEffectBinder binder;
+	BillboardEffectBinder billboardBinder;
+
 	ID3D11BlendState * particleSystemsBlendState;
 	ID3D11DepthStencilState * particleSystemsDepthState;
 	
@@ -152,6 +160,7 @@ public:
 #pragma region STATIC_ENTITIES
 
 	StaticEntityPtr AddStaticEntity(std::string fileName,std::string meshID);
+	StaticEntityPtr AddStaticEntity(ModelCreator<StaticVert> & creator, std::string meshID);
 	StaticEntityPtr AddStaticEntity(std::string meshID);
 
 	void RemoveStaticEntity(StaticEntityPtr entity);
@@ -164,6 +173,13 @@ public:
 	AnimatedEntityPtr AddAnimatedEntity(std::string id);
 
 	void RemoveAnimatedEntity(AnimatedEntityPtr entity);
+
+#pragma endregion
+
+#pragma region Billboards
+
+	BillboardPtr AddBillboard();
+	void RemoveParticleSystem(BillboardPtr ptr);
 
 #pragma endregion
 
@@ -208,6 +224,10 @@ protected:
 
 	void DrawEntities();
 	void DrawParticleSystems();
+	void DrawBillboards();
+
+	void BindTransperatObjectsOM();
+	void UnbindTransperantObjectsOM();
 
 	void SetUpShaderData();
 

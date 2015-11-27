@@ -7,7 +7,7 @@
 #include "ResourcePool.h"
 #include <unordered_map>
 #include "ModelHandler.h"
-
+#include "ModelCreator.h"
 
 class EXPORT StaticMeshData;
 class EXPORT AnimatedMeshData;
@@ -31,11 +31,13 @@ public:
 	
 	ModelHandler GetStaticModel(std::string resID);
 	ModelHandler GetStaticModelFromFile(std::string fileName,std::string resID);
+	ModelHandler GetStaticModelFromCreator(ModelCreator<StaticVert> & creator, std::string resID);
 
 	TextureHandler GetTexture(std::string fileName);
 
 	ModelHandler GetAnimatedModelFromFile(std::string fileName,std::string resID);
 	ModelHandler GetAnimatedModel(std::string resID);
+
 
 	SkeletonHandler GetSkeletonFromFile(std::string fileName,std::string resID);
 	SkeletonHandler GetSkeletonFromMemory(SkeletonPtr skeleton,std::string resID);

@@ -133,7 +133,7 @@ void Window::InitD3D(HWND handle,int width,int height)
 	ftr = D3D_FEATURE_LEVEL_11_0;
 
 	HRESULT reslt = D3D11CreateDeviceAndSwapChain(NULL,D3D_DRIVER_TYPE_HARDWARE,
-		nullptr,0,&ftr,1,
+		nullptr,D3D11_CREATE_DEVICE_DEBUG,&ftr,1,
 		D3D11_SDK_VERSION,
 		&desc,
 		&swapChain,

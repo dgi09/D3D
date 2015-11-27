@@ -39,18 +39,14 @@ ModelPtr AssetLoader::LoadStaticModel(std::string fileName)
 
 			file.read((char*)staticMeshData.indecies,sizeof(unsigned int) * staticMeshData.numberOfIndecies);
 
-			for(int i = 0;i < staticMeshData.numberOfVerts;i++)
-			{
-				staticMeshData.position[i] = staticMeshData.vertecies[i].pos;
-			}
-
 			MeshPtr meshPtr = factory->CreateMesh();
 			Mesh * mesh = meshPtr.Get();
 			mesh->Init();
+			mesh->SetDrawMethod(DM_DRAW_INDEXED);
 
 			mesh->InitVertexBuffer(staticMeshData.numberOfVerts * sizeof(StaticVert),sizeof(StaticVert),staticMeshData.vertecies);
 			mesh->InitIndexBuffer(staticMeshData.numberOfIndecies,staticMeshData.indecies);
-			mesh->InitPositionBuffer(staticMeshData.position);
+			
 			model->AddMesh(meshPtr);
 
 		}
@@ -80,7 +76,7 @@ SkeletonPtr AssetLoader::LoadSkeleton(std::string fileName)
 
 	int vertCount;
 	int indCount;
-	for(int i = 0;i < meshesCount;i++)
+	for(unsigned int i = 0;i < meshesCount;i++)
 	{
 		fread_s(&vertCount,4,4,1,f);
 
@@ -103,7 +99,7 @@ SkeletonPtr AssetLoader::LoadSkeleton(std::string fileName)
 
 	skeleton->bones = new Bone[skeleton->numberOfBones];
 	int index;
-	for(int i = 0;i<skeleton->numberOfBones;i++)
+	for(unsigned int i = 0;i<skeleton->numberOfBones;i++)
 	{
 		skeleton->bones[i].name = "name";
 		
@@ -157,17 +153,14 @@ ModelPtr AssetLoader::LoadAnimatedModel(std::string fileName)
 
 			fread_s(animatedMeshData.indecies,sizeof(unsigned int) * animatedMeshData.numOfIndecies, 4 ,animatedMeshData.numOfIndecies,f);
 
-			for(int i = 0;i < animatedMeshData.numOfVerts;i++)
-			{
-				animatedMeshData.positions[i] = animatedMeshData.verts[i].pos;
-			}
-
 			MeshPtr meshPtr = factory->CreateMesh();
 			Mesh * mesh = meshPtr.Get();
 			mesh->Init();
+			mesh->SetDrawMethod(DM_DRAW_INDEXED);
+
 			mesh->InitVertexBuffer(animatedMeshData.numOfVerts * sizeof(AnimatedVert),sizeof(AnimatedVert),animatedMeshData.verts);
 			mesh->InitIndexBuffer(animatedMeshData.numOfIndecies,animatedMeshData.indecies);
-			mesh->InitPositionBuffer(animatedMeshData.positions);
+			
 			model->AddMesh(meshPtr);
 
 		}
@@ -212,13 +205,13 @@ AnimationPtr AssetLoader::LoadAnimation(std::string fileName)
     DirectX::XMFLOAT3 tempVec;
 	DirectX::XMFLOAT4 tempQuat;
 
-	for(int i = 0;i< anim->numberOfBoneChannels;i++)
+	for (unsigned int i = 0; i< anim->numberOfBoneChannels; i++)
 	{
 		BoneAnimationData & data = anim->channels[i];
 		fread_s(&data.numberOfTranslationKeys,4,4,1,f);
 		data.translationKeys = new TranslationKey[data.numberOfTranslationKeys];
 
-		for(int t = 0;t < data.numberOfTranslationKeys;t++)
+		for (unsigned int t = 0; t < data.numberOfTranslationKeys; t++)
 		{
 			fread_s(&data.translationKeys[t].time,4,4,1,f);
 			fread_s(&data.translationKeys[t].val,12,12,1,f);
@@ -228,7 +221,7 @@ AnimationPtr AssetLoader::LoadAnimation(std::string fileName)
 		fread_s(&data.numberOfRotationKeys,4,4,1,f);
 		data.rotationKeys = new RotationKey[data.numberOfRotationKeys];
 
-		for(int r = 0;r < data.numberOfRotationKeys;r++)
+		for (unsigned int r = 0; r < data.numberOfRotationKeys; r++)
 		{
 			fread_s(&data.rotationKeys[r].time,4,4,1,f);
 			fread_s(&data.rotationKeys[r].val,16,16,1,f);
@@ -237,7 +230,7 @@ AnimationPtr AssetLoader::LoadAnimation(std::string fileName)
 		fread_s(&data.numberOfScalingKeys,4,4,1,f);
 		data.scalingKeys = new ScalingKey[data.numberOfScalingKeys];
 
-		for(int s = 0;s < data.numberOfScalingKeys;s++)
+		for (unsigned int s = 0; s < data.numberOfScalingKeys; s++)
 		{
 			fread_s(&data.scalingKeys[s].time,4,4,1,f);
 			fread_s(&data.scalingKeys[s].val,12,12,1,f);

@@ -33,16 +33,11 @@ public:
 	void Init(DeviceDependableFactory * factory);
 	void Destroy();
 
-	void BindOM();
-	void UnbindOM();
-
 	void Bind();
 	
 	void SetColorTexture(TexturePtr texture);
 	void SetCameraBuffer(ConstantBufferPtr buffer);
-	void SetRTVLinearDepth(TexturePtr texture);
-	void SetRTVColor(TexturePtr texture);
-	void SetRTVColor(ID3D11RenderTargetView * rtv);
+	
 	void FillParticleData(void * data,unsigned int size);
 	void SetCameraVectors(Vector3 upNormal,Vector3 rightNormal);
 };

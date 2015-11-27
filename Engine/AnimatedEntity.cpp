@@ -29,7 +29,7 @@ void AnimatedEntity::Draw(EffectBinder * binder)
 
 		MeshPtr ptr = model->GetMeshAt(i);
 		Mesh * mesh = ptr.Get();
-		mesh->DrawIndexed();
+		mesh->Draw();
 	}
 
 }

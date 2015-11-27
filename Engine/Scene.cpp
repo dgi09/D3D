@@ -79,6 +79,8 @@ void Scene::Init()
 	staticEntitiesPool.Allocate(100);
 	animatedEntitiesPool.Allocate(100);
 	particleSystemsPool.Allocate(100);
+	billboardsPool.Allocate(20);
+
 
 	dirLightsPool.Allocate(4);
 	pointLightsPool.Allocate(4);
@@ -191,8 +193,9 @@ void Scene::Init()
 
 	dsBinder.SetWorldPosRecBuffer(reconstrDataBuffer);
 
-	particleQuad = factory->CreateMesh();
-	Mesh * pm = particleQuad.Get();
+	bilboardQuad = factory->CreateMesh();
+	Mesh * pm = bilboardQuad.Get();
+
 	ScreenSpaceVert pmVerts[4] = 
 	{
 		{Vector3(-1.0f,-1.0f,0.0f),0.0f,1.0f},
@@ -204,6 +207,7 @@ void Scene::Init()
 	};
 	pm->InitVertexBuffer(sizeof(pmVerts),sizeof(ScreenSpaceVert),pmVerts);
 	pm->SetPrimitveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	
 
 	std::string vsParticleSystem = FileLoader::GetAllText(shadersPath + "\\vsParticleSystem.hlsl");
 	std::string psParticleSystem = FileLoader::GetAllText(shadersPath + "\\psParticleSystem.hlsl");
@@ -219,6 +223,22 @@ void Scene::Init()
 	binder.SetCameraBuffer(shaderData.GetCameraBuffer());
 
 	InitParticleSystemsDepthAndBlendStates();
+
+	//billboards
+
+	std::string vsBillboard = FileLoader::GetAllText(shadersPath + "\\vsBillboard.hlsl");
+	std::string psBillboard = FileLoader::GetAllText(shadersPath + "\\psBillboard.hlsl");
+
+	billboardEffect.Init(factory);
+	billboardEffect.LoadVertexShaderFromString(vsBillboard.c_str(), vsBillboard.size(), &ptl);
+	billboardEffect.LoadPixelShaderFromString(psBillboard.c_str(), psBillboard.size());
+
+	billboardBinder.SetDevice(dxData.device);
+	billboardBinder.Init(factory);
+	billboardBinder.SetCamMatrixesBuffer(shaderData.GetCameraBuffer());
+
+	//------------
+
 	ID3D11DeviceContext * context = nullptr;
 	dxData.device->GetImmediateContext(&context);
 	context->OMGetDepthStencilState(&normalDepthState,nullptr);
@@ -238,9 +258,6 @@ void Scene::Init()
 	t = particlesFinalColor.Get();
 
 	t->InitTexture(windowWidth,windowHeight,RENDER_TARGET,DXGI_FORMAT_R8G8B8A8_UNORM);
-
-	binder.SetRTVLinearDepth(particlesLinearDepth);
-	binder.SetRTVColor(particlesFinalColor);
 
 	std::string psFinalCombie = FileLoader::GetAllText(shadersPath + "\\psFinalCombine.hlsl");
 	finalCombineEffect = factory->CreatePixelShader();
@@ -323,9 +340,9 @@ void Scene::DrawAll()
 	context->RSSetViewports(1,&vp);
 	toneMapper.Run(hdr,nontransperantFinalColor);
 
-#pragma region Draw Particles
+#pragma region Draw Transperant Objects
 
-	if(particleSystems.size() > 0)
+	if(particleSystems.size() > 0 || billboards.size() > 0)
 	{
 
 		float blendFactor[] = {0.0f,0.0f,0.0f,0.0f};
@@ -333,9 +350,12 @@ void Scene::DrawAll()
 		context->OMSetBlendState(particleSystemsBlendState, blendFactor, 0xffffffff);
 		context->OMSetDepthStencilState(particleSystemsDepthState,1);
 
+		BindTransperatObjectsOM();
 
 		DrawParticleSystems();
+		DrawBillboards();
 
+		UnbindTransperantObjectsOM();
 
 		context->OMSetBlendState(nullptr,blendFactor,0xffffffff);
 		context->OMSetDepthStencilState(normalDepthState,1);
@@ -381,6 +401,21 @@ StaticEntityPtr Scene::AddStaticEntity(std::string fileName,std::string meshID)
 	else return StaticEntityPtr(true);
 }
 
+
+StaticEntityPtr Scene::AddStaticEntity(ModelCreator<StaticVert> & creator, std::string meshID)
+{
+	ModelHandler handler = resourceManager->GetStaticModelFromCreator(creator, meshID);
+	if (handler.ContainsObject())
+	{
+		StaticEntityPtr ptr(staticEntitiesPool.New(), &staticEntitiesPool);
+		ptr.Get()->Init(handler, resourceManager, factory);
+		staticEntites.push_back(ptr);
+		return ptr;
+	}
+	else return StaticEntityPtr(true);
+}
+
+
 StaticEntityPtr Scene::AddStaticEntity(std::string meshID)
 {
 	ModelHandler handler = resourceManager->GetStaticModel(meshID);
@@ -415,12 +450,13 @@ void Scene::RemoveStaticEntity(StaticEntityPtr entity)
 
 void Scene::DrawEntities()
 {
-	for(int i = 0;i<staticEntites.size();i++)
+
+	for (unsigned int i = 0; i<staticEntites.size(); i++)
 	{
 		DrawEntity(staticEntites[i].Get());
 	}
 
-	for(int i = 0;i < animatedEntities.size(); i++)
+	for (unsigned int i = 0; i < animatedEntities.size(); i++)
 	{
 		DrawEntity(animatedEntities[i].Get());
 	}
@@ -428,14 +464,14 @@ void Scene::DrawEntities()
 
 void Scene::RemoveAllEntities()
 {
-	for(int i = 0;i < staticEntites.size();i++)
+	for (unsigned int i = 0; i < staticEntites.size(); i++)
 	{
 		staticEntites[i].Get()->Destroy();
 	}
 
 	staticEntites.clear();
 
-	for(int i = 0;i < animatedEntities.size();i++)
+	for (unsigned int i = 0; i < animatedEntities.size(); i++)
 	{
 		animatedEntities[i].Get()->Destroy();
 	}
@@ -462,6 +498,8 @@ AnimatedEntityPtr Scene::AddAnimatedEntity(std::string fileName,std::string id)
 	animatedEntities.push_back(ptr);
 	return ptr;
 }
+
+
 
 AnimatedEntityPtr Scene::AddAnimatedEntity(std::string id)
 {
@@ -500,7 +538,7 @@ ParticleSystemPtr Scene::AddParticleSystem()
 {
 	ParticleSystemPtr ptr(particleSystemsPool.New(),&particleSystemsPool);
 	ParticleSystem * system = ptr.Get();
-	system->Init(particleQuad,resourceManager);
+	system->Init(bilboardQuad,resourceManager);
 
 	particleSystems.push_back(ptr);
 	return ptr;
@@ -519,8 +557,68 @@ void Scene::RemoveParticleSystem(ParticleSystemPtr system)
 	}
 }
 
+#pragma endregion
+
+
+#pragma region Billboards
+
+BillboardPtr Scene::AddBillboard()
+{
+	BillboardPtr ptr(billboardsPool.New(), &billboardsPool);
+	Billboard * b = ptr.Get();
+	b->Init(bilboardQuad, resourceManager);
+
+	billboards.push_back(ptr);
+	return ptr;
+}
+
+void Scene::RemoveParticleSystem(BillboardPtr ptr)
+{
+	for (std::vector<BillboardPtr>::iterator it = billboards.begin(); it != billboards.end(); ++it)
+	{
+		if (ptr == *it)
+		{
+			ptr.Get()->Destroy();
+			particleSystemsPool.Delete(ptr.GetIndex());
+
+			billboards.erase(it);
+			break;
+		}
+	}
+}
 
 #pragma endregion
+
+void Scene::BindTransperatObjectsOM()
+{
+
+	ID3D11DeviceContext * context;
+	dxData.device->GetImmediateContext(&context);
+
+	ID3D11RenderTargetView * rtvColor = particlesFinalColor.Get()->GetRenderTargetPtr();
+	ID3D11RenderTargetView * rtvLinearDepth = particlesLinearDepth.Get()->GetRenderTargetPtr();
+
+	ID3D11RenderTargetView * rtvs[2] = { rtvColor,rtvLinearDepth};
+
+	float color[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	context->ClearRenderTargetView(rtvColor, color);
+	float depth[4] = { 1.0f, 0.0f, 0.0f, 0.0f };
+
+	context->ClearRenderTargetView(rtvLinearDepth, depth);
+
+	context->OMSetRenderTargets(2, rtvs, nullptr);
+}
+
+void Scene::UnbindTransperantObjectsOM()
+{
+	ID3D11DeviceContext * context;
+	dxData.device->GetImmediateContext(&context);
+
+	ID3D11RenderTargetView * rtvs[2] = { nullptr, nullptr };
+
+	context->OMSetRenderTargets(2, rtvs, nullptr);
+}
+
 
 void Scene::DrawEntity(EntityBase * entity)
 {
@@ -785,7 +883,7 @@ void Scene::SetUpShaderData()
 	if(illuminationInfo.numberOfPointLights > 0)
 	{
 		bool fill = false;
-		for(int i = 0;i < pointLights.size();i++)
+		for (unsigned int i = 0; i < pointLights.size(); i++)
 		{
 			if(pointLights[i].Get()->IsChanged())
 			{
@@ -806,20 +904,37 @@ void Scene::SetBackgroundColor(Color color)
 
 void Scene::DrawParticleSystems()
 {
-
-	particleSystemEffect.Apply();
-	binder.BindOM();
-
-	Camera * cam = activeCamera.Get();
-	binder.SetCameraVectors(cam->GetUpNormal(),cam->GetRightNormal());
-
-	for(unsigned int i = 0;i < particleSystems.size();i++)
+	if (particleSystems.size() > 0)
 	{
-		ParticleSystem * ps = particleSystems[i].Get();
-		ps->Draw(&binder);
-	}
+		particleSystemEffect.Apply();
 
-	binder.UnbindOM();
+
+		Camera * cam = activeCamera.Get();
+		binder.SetCameraVectors(cam->GetUpNormal(), cam->GetRightNormal());
+
+		for (unsigned int i = 0; i < particleSystems.size(); i++)
+		{
+			ParticleSystem * ps = particleSystems[i].Get();
+			ps->Draw(&binder);
+		}
+	}
+}
+
+void Scene::DrawBillboards()
+{
+	if (billboards.size() > 0)
+	{
+		billboardEffect.Apply();
+
+		Camera * cam = activeCamera.Get();
+		billboardBinder.SetCamVectors(cam->GetUpNormal(), cam->GetRightNormal());
+
+		for (unsigned int i = 0; i < billboards.size(); i++)
+		{
+			Billboard * b = billboards[i].Get();
+			b->Draw(&billboardBinder);
+		}
+	}
 }
 
 void Scene::InitParticleSystemsDepthAndBlendStates()

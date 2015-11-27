@@ -22,6 +22,6 @@ void StaticEntity::Draw(EffectBinder * binder)
 		binder->BindAllSections();
 
 		Mesh * mesh = model->GetMeshAt(i).Get();
-		mesh->DrawIndexed();
+		mesh->Draw();
 	}
 }

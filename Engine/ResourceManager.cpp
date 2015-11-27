@@ -63,6 +63,52 @@ ModelHandler ResourceManager::GetStaticModelFromFile(std::string fileName,std::s
 	}
 }
 
+ModelHandler ResourceManager::GetStaticModelFromCreator(ModelCreator<StaticVert> & creator, std::string resID)
+{
+	unsigned int id = hasher(resID);
+	if (pool->ModelExist(id))
+	{
+		ModelHandler handler(pool->GetModel(id), id, pool);
+		return handler;
+	}
+	else
+	{
+
+		ModelPtr modelPtr(Heap::GetPtr()->Models.New());
+		Model * model = modelPtr.Get();
+
+		for (unsigned int i = 0; i < creator.GetNumberOfMeshes(); i++)
+		{
+			MeshRep<StaticVert> meshRep = creator.GetMeshRep(i);
+			MeshPtr meshPtr = factory->CreateMesh();
+			Mesh * mesh = meshPtr.Get();
+			
+			if (meshRep.vertData)
+			{
+				mesh->InitVertexBuffer(meshRep.vertDataSize, meshRep.vertStride, meshRep.vertData);
+			}
+
+			if (meshRep.indexData)
+			{
+				mesh->InitIndexBuffer(meshRep.numberOfIndexes, meshRep.indexData);
+			}
+
+			mesh->SetPrimitveTopology(meshRep.topology);
+			mesh->SetDrawMethod(meshRep.drawMethod);
+
+			model->AddMesh(meshPtr);
+		}
+
+		if (modelPtr.IsNull())
+		{
+			ModelHandler handler(false);
+			return handler;
+		}
+
+		return ModelHandler(modelPtr, id, pool);
+	}
+}
+
 
 TextureHandler ResourceManager::GetTexture(std::string fileName)
 {
