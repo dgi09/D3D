@@ -52,7 +52,7 @@ int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
 	scene->SetActiveCamera(camPtr);
 
-	ITest * test = new Billboard_Test();
+	ITest * test = new Dragon_Dogs_ParticleSystem();
 	test->Init(scene);
 	
 	
