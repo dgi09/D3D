@@ -168,3 +168,43 @@ Vector3 Camera::GetRightNormal()
 	return rightNormal;
 }
 
+void Camera::CalcPickingRay(float localX, float localY)
+{
+
+	SetUpData();
+
+	float pointX = ((2.0f * localX) / width) - 1.0f;
+	float pointY = (((2.0f * localY) / height) - 1.0f) * -1.0f;
+
+	XMMATRIX view = XMLoadFloat4x4(&shaderData.view);
+	XMMATRIX proj = XMLoadFloat4x4(&shaderData.projection);
+
+	XMVECTOR in = XMVectorSet(pointX, pointY, 0.0f, 1.0f);
+
+
+	XMVECTOR res1 = XMVector3Unproject(in, 0, 0, width, height, nearDistance, farDistance, proj, view, XMMatrixIdentity());
+
+	in = XMVectorSet(pointX, pointY, 1.0f, 1.0f);
+
+	XMVECTOR res2 = XMVector3Unproject(in, 0, 0, width, height, nearDistance, farDistance, proj, view, XMMatrixIdentity());
+
+	XMStoreFloat3((XMFLOAT3*)&pickRayDirection, res2 - res1);
+
+
+}
+
+Vector3 Camera::GetPickingRayOrigin()
+{
+	return pickRayOrigin;
+}
+
+Vector3 Camera::GetPickingRayDirection()
+{
+	return pickRayDirection;
+}
+
+void Camera::SetViewport(float width, float height)
+{
+	this->width = width;
+	this->height = height;
+}

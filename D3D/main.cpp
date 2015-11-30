@@ -18,7 +18,7 @@
 #include "Dragon_Dogs_ParticleSystem.h"
 #include "Model_Creator.h"
 #include "Billboard_Test.h"
-
+#include "Object_Picking_Test.h"
 
 #define LOOP_STYLE
 
@@ -47,17 +47,21 @@ int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	cam->SetPosition(0.0f,0.0f,-100.0f);
 	cam->LookAt(0.0f,0.0f,0.0f);
 	cam->SetNearDistance(2.0f);
-	cam->SetFarDistance(1000.0f);
+	cam->SetFarDistance(50000.0f);
 	cam->SetFOV(90.0f);
 
 	scene->SetActiveCamera(camPtr);
 
-	ITest * test = new Dragon_Dogs_ParticleSystem();
+
+	ITest * test = new Object_Picking_Test;
 	test->Init(scene);
 	
 	
 	InputManager mgr;
 	mgr.Init(window->GetHandle(),hInstance);
+
+
+	((Object_Picking_Test*)test)->SetInputMgr(&mgr);
 
 	FPSCameraController fps;
 	fps.SetCamera(camPtr);
@@ -72,10 +76,11 @@ int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 		if(GetTickCount() - time < 12)
 			continue;
 
-		test->Update();
-
 
 		mgr.Update();
+
+		test->Update();
+
 		fps.Update(mgr);
 
 

@@ -23,6 +23,9 @@ class EXPORT InputManager
 
 	bool firstInit;
 	HWND hwnd;
+
+	bool lastStateDown[4];
+	bool currentStateDown[4];
 public:
 	InputManager();
 	~InputManager();
@@ -32,6 +35,7 @@ public:
 
 	bool KeyPressed(UINT key);
 	bool MouseButtonDown(MouseButton button);
+	bool MouseButtonClick(MouseButton button);
 	bool MouseMove();
 
 	int GetMouseX();

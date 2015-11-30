@@ -664,10 +664,14 @@ void Scene::RemoveCamera(CameraPtr camera)
 
 void Scene::SetActiveCamera(CameraPtr camera)
 {
-	if(!camera.IsNull())
-		activeCamera = camera;
+	activeCamera = camera;
+	activeCamera.Get()->SetViewport((float)windowWidth, (float)windowHeight);
 }
 
+CameraPtr Scene::GetActiveCamera()
+{
+	return activeCamera;
+}
 
 #pragma endregion
 

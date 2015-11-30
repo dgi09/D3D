@@ -56,7 +56,11 @@ void MainForm::OnAddStaticEntity_Click(wxMouseEvent &evt)
 void MainForm::InitScene()
 {
 	scene = drawPanel->GetScene();
+#ifdef WORK_PC
+	scene->SetShadersPath("E:\\D3D\\ShaderTamplates");
+#else
 	scene->SetShadersPath("E:\\Projects\\D3D\\ShaderTamplates");
+#endif
 	scene->Init();
 
 	CameraPtr camPtr = scene->AddCamera();

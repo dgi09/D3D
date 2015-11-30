@@ -2,6 +2,16 @@
 
 void Dragon_Dogs_ParticleSystem::Init(Scene * scene)
 {
+
+	StaticEntityPtr skyPtr = scene->AddStaticEntity("assets/sphere.smodel", "sky");
+	StaticEntity * sky = skyPtr.Get();
+	sky->Illuminate(false);
+	sky->SetScale(10000, 10000, 10000);
+	
+	Material * m = sky->GetMaterial(0);
+	m->SetDiffuseMap("assets/risinger.jpg");
+	m->UseDiffuseMap(true);
+
 	psPtr = scene->AddParticleSystem();
 	ParticleSystem * ps = psPtr.Get();
 	ps->SetColorTexture("assets/fire.png");
@@ -77,7 +87,7 @@ void Dragon_Dogs_ParticleSystem::Init(Scene * scene)
 	planePtr = scene->AddStaticEntity("assets/plane.model", "plane");
 	StaticEntity * plane = planePtr.Get();
 	plane->Illuminate(true);
-	plane->SetScale(50.0f, 1.0f, 50.0f);
+	plane->SetScale(500.0f, 1.0f, 500.0f);
 
 	Material * pMat = plane->GetMaterial(0);
 	pMat->UseDiffuseMap(false);
@@ -129,7 +139,7 @@ void Dragon_Dogs_ParticleSystem::Init(Scene * scene)
 
 	mat = torch->GetMaterial(0);
 	mat->SetEmmisivePower(1);
-	mat->SetSpecularPower(10);
+	mat->SetSpecularPower(1);
 
 	treePtr = scene->AddStaticEntity("assets/tree.smodel", "tree");
 	StaticEntity * tree = treePtr.Get();
@@ -152,7 +162,9 @@ void Dragon_Dogs_ParticleSystem::Init(Scene * scene)
 	mat = sword->GetMaterial(0);
 	mat->UseDiffuseMap(false);
 	mat->SetDiffuseColor(Color::White());
-	mat->SetEmmisivePower(10);
+	mat->SetEmmisivePower(20);
+
+	
 }
 
 

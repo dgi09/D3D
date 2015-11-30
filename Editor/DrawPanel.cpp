@@ -9,9 +9,7 @@ DrawPanel::DrawPanel(wxWindow * parent,wxPoint pos,wxSize size,int flags,wchar_t
 	wxControl->Bind(wxEVT_ERASE_BACKGROUND,&DrawPanel::OnBackErase,this);
 	wxControl->Bind(wxEVT_DESTROY,&DrawPanel::OnDestroy,this);
 	window = Window::Create(size.GetWidth(),size.GetHeight(),(HWND)wxControl->GetHandle());
-	scene = window->GetScene();
-	scene->SetShadersPath("E:\\Projects\\D3D\\ShaderTamplates");
-	scene->Init();
+
 }
 
 

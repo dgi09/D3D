@@ -195,6 +195,7 @@ public:
 	CameraPtr AddCamera();
 	void RemoveCamera(CameraPtr camera);
 	void SetActiveCamera(CameraPtr camera);
+	CameraPtr GetActiveCamera();
 #pragma endregion
 
 #pragma region LIGHTS

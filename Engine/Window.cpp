@@ -47,17 +47,18 @@ Window * Window::Create(int width,int height,LPCWSTR caption, int showCmd)
 	win.hbrBackground = (HBRUSH)(COLOR_WINDOW+2);
 
 	
+	Window * window = new Window();
 
 	RegisterClassEx(&win);
-	HWND handle = CreateWindowEx(WS_EX_CLIENTEDGE,L"D3DWindow",caption,WS_OVERLAPPEDWINDOW,0,0,width,height,NULL
+	window->handle = CreateWindowEx(WS_EX_CLIENTEDGE,L"D3DWindow",caption,WS_OVERLAPPEDWINDOW,0,0,width,height,NULL
 		,NULL,GetModuleHandle(NULL),NULL);
 
 
-	Window * window = new Window();
-	window->InitD3D(handle,width,height);
 	
-	ShowWindow(handle,showCmd);
-	UpdateWindow(handle);
+	window->InitD3D(window->handle, width, height);
+	
+	ShowWindow(window->handle, showCmd);
+	UpdateWindow(window->handle);
 
 
 	return window;

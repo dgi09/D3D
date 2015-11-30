@@ -44,7 +44,12 @@ void InputManager::Init(HWND handle,HINSTANCE hInstance)
 	mouse->SetCooperativeLevel(handle, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
 	mouse->Acquire();
 
-
+	for (int i = 0; i < 4; i++)
+	{
+		currentStateDown[i] = false;
+		lastStateDown[i] = false;
+	}
+	
 }
 
 void InputManager::Update()
@@ -89,6 +94,21 @@ void InputManager::Update()
 	{
 		mouseMove = false;
 	}
+
+	for (int i = 0; i < 4; i++)
+	{
+		lastStateDown[i] = currentStateDown[i];
+
+		if (mState.rgbButtons[i] & 0x80)
+		{
+			currentStateDown[i] = true;
+		}
+		else
+		{
+			currentStateDown[i] = false;
+		}
+	}
+	
 }
 
 bool InputManager::KeyPressed(UINT key)
@@ -120,5 +140,10 @@ int InputManager::GetMouseY()
 
 bool InputManager::MouseButtonDown(MouseButton button)
 {
-	return (bool)(mState.rgbButtons[button] & 0x80);
+	return currentStateDown[(int)button] && GetMouseX() > 0 && GetMouseY() > 0;
+}
+
+bool InputManager::MouseButtonClick(MouseButton button)
+{
+	return !currentStateDown[(int)button] && lastStateDown[button] && GetMouseX() > 0 && GetMouseY() > 0;
 }
