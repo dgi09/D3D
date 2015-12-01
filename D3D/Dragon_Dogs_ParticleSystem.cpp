@@ -56,7 +56,7 @@ void Dragon_Dogs_ParticleSystem::Init(Scene * scene)
 
 	AnimatedEntity * en = enPtr.Get();
 	en->SetPosition(0.0f, 0.0f, 0.0f);
-	en->Illuminate(false);
+	en->Illuminate(true);
 	en->SetScale(10.0f, 10.0f, 10.0f);
 	en->SetPosZ(-100);
 	//en->SetRotationY(90.0f);

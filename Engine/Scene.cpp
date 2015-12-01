@@ -622,6 +622,10 @@ void Scene::UnbindTransperantObjectsOM()
 
 void Scene::DrawEntity(EntityBase * entity)
 {
+
+	if (!entity->IsVisible())
+		return;
+
 	Frustrum * f = activeCamera.Get()->GetFrustrum();
 
 	//if(f->IsSphereIn(entity->GetBoundingSphere()))

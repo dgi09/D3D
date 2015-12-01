@@ -3,47 +3,26 @@
 
 InputManager::InputManager()
 {
-	inputDevice = nullptr;
-	keyboard = nullptr;
 
 	mouseMove = false;
 	mouseX = 0;
 	mouseY = 0;
-	firstInit = true;
 }
 
 InputManager::~InputManager()
 {
 
-	if(keyboard != nullptr)
-	{
-		keyboard->Unacquire();
-		keyboard->Release();
-	}
-
-	if(inputDevice != nullptr)
-		inputDevice->Release();
+	
 }
 
-void InputManager::Init(HWND handle,HINSTANCE hInstance)
+void InputManager::Init()
 {
 
-	hwnd = handle;
-
-	DirectInput8Create(hInstance,0x0800,IID_IDirectInput8,(void**)&inputDevice,nullptr);
-	inputDevice->CreateDevice(GUID_SysKeyboard, &keyboard, NULL);
-	keyboard->SetDataFormat(&c_dfDIKeyboard);
-	keyboard->SetCooperativeLevel(handle, DISCL_FOREGROUND | DISCL_EXCLUSIVE);
-
-	keyboard->Acquire();
-	//keyboard->GetDeviceState(sizeof(keys),(void**)&keys);
-	ZeroMemory(keys,sizeof(keys));
-
-	inputDevice->CreateDevice(GUID_SysMouse, &mouse, NULL);
-	mouse->SetDataFormat(&c_dfDIMouse);
-	mouse->SetCooperativeLevel(handle, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE);
-	mouse->Acquire();
-
+	for (int i = 0; i < 282; i++)
+	{
+		keys[i] = false;
+	}
+	
 	for (int i = 0; i < 4; i++)
 	{
 		currentStateDown[i] = false;
@@ -52,72 +31,59 @@ void InputManager::Init(HWND handle,HINSTANCE hInstance)
 	
 }
 
-void InputManager::Update()
+void InputManager::PreUpdate()
 {
-	if(firstInit)
-	{
-		POINT p;
-		GetCursorPos(&p);
-		ScreenToClient(hwnd,&p);
-
-		mouseX = p.x;
-		mouseY = p.y;
-
-		firstInit = false;
-	}
-
-	HRESULT res = keyboard->GetDeviceState(sizeof(keys),(void**)&keys);
-	if((res == DIERR_INPUTLOST) || (res == DIERR_NOTACQUIRED))
-	{
-		keyboard->Acquire();
-	}
-
-	res = mouse->GetDeviceState(sizeof(DIMOUSESTATE),(void**)&mState);
-
-
-	if((res == DIERR_INPUTLOST) || (res == DIERR_NOTACQUIRED))
-	{
-		mouse->Acquire();
-	}
-
-
-	if(mState.lX != 0 || mState.lY != 0)
-	{
-		mouseX += mState.lX;
-		mouseY += mState.lY;
-
-
-		mouseMove = true;
-
-	}
-	else 
-	{
-		mouseMove = false;
-	}
-
 	for (int i = 0; i < 4; i++)
 	{
 		lastStateDown[i] = currentStateDown[i];
-
-		if (mState.rgbButtons[i] & 0x80)
-		{
-			currentStateDown[i] = true;
-		}
-		else
-		{
-			currentStateDown[i] = false;
-		}
 	}
-	
 }
 
-bool InputManager::KeyPressed(UINT key)
+
+void InputManager::Update(SDL_Event evt)
 {
-	if(key >= 0 && key <= 256)
+	
+	if (evt.type == SDL_MOUSEBUTTONDOWN)
 	{
-		if(keys[key])
-			return true;
-		else return false;
+		if (evt.button.button > 0 && evt.button.button < 4)
+		{
+			currentStateDown[evt.button.button - 1] = true;
+		}
+
+	}
+	else if (evt.type == SDL_MOUSEBUTTONUP)
+	{
+		if (evt.button.button > 0 && evt.button.button < 4)
+		{
+			currentStateDown[evt.button.button - 1] = false;
+		}
+	}
+
+	if (evt.type == SDL_KEYDOWN)
+	{
+		keys[evt.key.keysym.scancode] = true;
+	}
+	else if (evt.type == SDL_KEYUP)
+	{
+		keys[evt.key.keysym.scancode] = false;
+	}
+	
+	mouseX = evt.button.x;
+	mouseY = evt.button.y;
+
+	if (evt.type == SDL_MOUSEMOTION)
+	{
+		mouseMove = true;
+	}
+	else
+		mouseMove = false;
+}
+
+bool InputManager::KeyPressed(unsigned int key)
+{
+	if(key >= 0 && key <= 281)
+	{
+		return keys[key];
 	}
 
 	return false;
@@ -140,10 +106,10 @@ int InputManager::GetMouseY()
 
 bool InputManager::MouseButtonDown(MouseButton button)
 {
-	return currentStateDown[(int)button] && GetMouseX() > 0 && GetMouseY() > 0;
+	return currentStateDown[(int)button];
 }
 
 bool InputManager::MouseButtonClick(MouseButton button)
 {
-	return !currentStateDown[(int)button] && lastStateDown[button] && GetMouseX() > 0 && GetMouseY() > 0;
+	return !currentStateDown[(int)button] && lastStateDown[button];
 }

@@ -1,11 +1,13 @@
 #include "Window.h"
 #include "Scene.h"
 
+#include <SDL_syswm.h>
+
 Window::Window(void)
 {
 	windowOpened = true;
 	depthView = nullptr;
-
+	sdlWindow = nullptr;
 }
 
 
@@ -13,6 +15,7 @@ Window::~Window(void)
 {
 	delete scene;
 	
+
 
 	if(depthState != nullptr)
 		depthState->Release();
@@ -31,12 +34,15 @@ Window::~Window(void)
 
 	if(swapChain != nullptr)
 		swapChain->Release();
+
+	SDL_DestroyWindow(sdlWindow);
+	SDL_Quit();
 }
 
-Window * Window::Create(int width,int height,LPCWSTR caption, int showCmd)
+Window * Window::Create(int width,int height,const char* caption)
 {
 
-	WNDCLASSEX win;
+	/*WNDCLASSEX win;
 	ZeroMemory(&win,sizeof(WNDCLASSEX));
 	win.cbClsExtra = 0;
 	win.cbWndExtra = 0;
@@ -44,22 +50,32 @@ Window * Window::Create(int width,int height,LPCWSTR caption, int showCmd)
 	win.hInstance = GetModuleHandle(NULL);
 	win.lpszClassName = L"D3DWindow";
 	win.lpfnWndProc = WinProc;
-	win.hbrBackground = (HBRUSH)(COLOR_WINDOW+2);
+	win.hbrBackground = (HBRUSH)(COLOR_WINDOW+2);*/
 
 	
 	Window * window = new Window();
 
-	RegisterClassEx(&win);
+	/*RegisterClassEx(&win);
 	window->handle = CreateWindowEx(WS_EX_CLIENTEDGE,L"D3DWindow",caption,WS_OVERLAPPEDWINDOW,0,0,width,height,NULL
-		,NULL,GetModuleHandle(NULL),NULL);
+		,NULL,GetModuleHandle(NULL),NULL);*/
 
 
+	SDL_Init(SDL_INIT_EVERYTHING);
 	
+	window->sdlWindow = SDL_CreateWindow(caption, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, width, height,0);
+
+	SDL_SysWMinfo wmInfo;
+	SDL_VERSION(&wmInfo.version);
+	SDL_GetWindowWMInfo(window->sdlWindow, &wmInfo);
+	window->handle = wmInfo.info.win.window;
+
 	window->InitD3D(window->handle, width, height);
-	
-	ShowWindow(window->handle, showCmd);
-	UpdateWindow(window->handle);
+	window->inputManager = new InputManager();
+	window->inputManager->Init();
 
+	/*ShowWindow(window->handle, showCmd);
+	UpdateWindow(window->handle);
+*/
 
 	return window;
 }
@@ -78,13 +94,17 @@ void Window::Destroy(Window * window)
 
 void Window::HandleEvents()
 {
-	while(PeekMessage(&msg, NULL, 0, 0,PM_REMOVE))
-	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
 
-		if(msg.message == WM_QUIT)
+	inputManager->PreUpdate();
+	while(SDL_PollEvent(&ev))
+	{
+		if (ev.type == SDL_QUIT)
+		{
 			Close();
+			break;
+		}
+
+		inputManager->Update(ev);
 	}
 }
 
@@ -154,8 +174,8 @@ void Window::InitD3D(HWND handle,int width,int height)
 
 	view.TopLeftX = 0.0f;
 	view.TopLeftY = 0.0f;
-	view.Width = width;
-	view.Height = height;
+	view.Width = (float)width;
+	view.Height = (float)height;
 	view.MinDepth = 0.0f;
 	view.MaxDepth = 1.0f;
 
@@ -232,7 +252,10 @@ HWND Window::GetHandle()
 	return handle;
 }
 
-
+InputManager * Window::GetInputManager()
+{
+	return inputManager;
+}
 
 /////////////////////////
 

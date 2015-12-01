@@ -1,11 +1,13 @@
 #pragma once 
+
+#include "Common.h"
 #include "Vector3.h"
 
-class EXPORT BoundingSphere 
+class EXPORT AABB
 {
 public:
-	Vector3 position;
-	float radius;
+	Vector3 min;
+	Vector3 max;
 
 	bool RayIntersact(Vector3 origin, Vector3 dir);
 };

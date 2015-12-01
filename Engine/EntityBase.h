@@ -14,6 +14,8 @@
 #include "DrawPack.h"
 #include "Color.h"
 #include "Material.h"
+#include <DirectXMath.h>
+#include "AABB.h"
 
 
 class EXPORT EffectBinder;
@@ -36,6 +38,11 @@ protected:
 
 	std::vector<Material> materials;
 
+	BoundingSphere bSphere;
+	AABB aabb;
+
+	bool bSphereCreated, aabbCreated;
+
 public:
 	virtual void Draw(EffectBinder * binder) = 0;
 
@@ -49,10 +56,17 @@ public:
 
 	Material * GetMaterial(unsigned int subset);
 
+	DirectX::XMFLOAT4X4 GetWorldMatrix();
+
+	BoundingSphere GetBoundingSphere();
+	AABB GetAABB();
+
+
 protected:
 	void BindEntityData(EffectBinder * binder);
 	void BindMaterialData(EffectBinder * binder, Material & mat);
 	void SetUpShaderData();
     virtual void BuildBoundingSphere();
+	virtual void BuildAABB();
 	
 };

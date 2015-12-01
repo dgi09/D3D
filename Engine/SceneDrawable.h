@@ -7,10 +7,8 @@ class EXPORT SceneDrawable : public Positionable
 {
 protected:
 	bool visible;
-	BoundingSphere sphere;
-public:
 	
-	BoundingSphere GetBoundingSphere();
+public:
 	void SetVisible(bool val);
 	bool IsVisible();
 };

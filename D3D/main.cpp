@@ -20,14 +20,19 @@
 #include "Billboard_Test.h"
 #include "Object_Picking_Test.h"
 
+#undef main
+
 #define LOOP_STYLE
 
-int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd )
+//int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd )
+int main(int argc, char** argv)
 {
 
 	srand(time_t(0));
 
-	Window * window = Window::Create(1200,1000,L"Game",nShowCmd);
+	unsigned int w = 1000;
+	unsigned int h = 1000;
+	Window * window = Window::Create(w,h,"Game");
 
 	Scene * scene = window->GetScene();
 
@@ -44,24 +49,23 @@ int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	Camera * cam = camPtr.Get();
 
 
-	cam->SetPosition(0.0f,0.0f,-100.0f);
+	cam->SetPosition(0.0f,0.0f,-5.0f);
 	cam->LookAt(0.0f,0.0f,0.0f);
 	cam->SetNearDistance(2.0f);
 	cam->SetFarDistance(50000.0f);
-	cam->SetFOV(90.0f);
+	cam->SetFOV(60.0f);
 
 	scene->SetActiveCamera(camPtr);
 
 
-	ITest * test = new Object_Picking_Test;
+	ITest * test = new Dragon_Dogs_ParticleSystem;
 	test->Init(scene);
 	
 	
-	InputManager mgr;
-	mgr.Init(window->GetHandle(),hInstance);
+	InputManager * mgr = window->GetInputManager();
 
 
-	((Object_Picking_Test*)test)->SetInputMgr(&mgr);
+	//((Object_Picking_Test*)test)->SetInputMgr(mgr);
 
 	FPSCameraController fps;
 	fps.SetCamera(camPtr);
@@ -76,16 +80,12 @@ int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 		if(GetTickCount() - time < 12)
 			continue;
 
-
-		mgr.Update();
+		window->HandleEvents();
+	
 
 		test->Update();
 
-		fps.Update(mgr);
-
-
-
-		window->HandleEvents();
+		fps.Update(*mgr);
 
 		scene->DrawAll();
 

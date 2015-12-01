@@ -10,6 +10,8 @@
 #include <cmath>
 #include "DrawPack.h"
 #include "MaterialBindingSection.h"
+#include <cfloat>
+
 
 using namespace DirectX;
 
@@ -90,7 +92,8 @@ void EntityBase::Init(ModelHandler model,ResourceManager * resMgr, DeviceDependa
 		materials[i].Init(resMgr);
 	}
 
-	BuildBoundingSphere();
+	bSphereCreated = false;
+	aabbCreated = false;
 
 	shaderData.Init(factory);
 
@@ -146,7 +149,52 @@ void EntityBase::BuildBoundingSphere()
 		mesh->EndRead();
 	}
 
-	sphere.radius = maxRadius;
+	bSphere.radius = maxRadius;
+	bSphere.position = Vector3(0.0f, 0.0f, 0.0f);
+	
+	bSphereCreated = true;
+}
+
+void EntityBase::BuildAABB()
+{
+	Vector3 max, min;
+
+	Model * model = modelHandler.Get().Get();
+
+	for (unsigned int i = 0; i < model->GetNumberOfMeshes(); i++)
+	{
+
+		Mesh * mesh = model->GetMeshAt(i).Get();
+
+		void * vertData = mesh->Read();
+		int stride = mesh->GetStride();
+		Vector3 * pos = (Vector3*)((unsigned int)vertData);
+		max = *pos;
+		min = *pos;
+
+		for (int i = 1; i < mesh->GetNumberOfVerts(); i++)
+		{
+			pos = (Vector3*)((unsigned int)vertData + i * stride);
+
+			if (pos->x > max.x)
+			{
+				max.x = pos->x;
+			}
+			if (pos->y > max.y) max.y = pos->y;
+			if (pos->z > max.z) max.z = pos->z;
+
+			if (pos->x < min.x) min.x = pos->x;
+			if (pos->y < min.y) min.y = pos->y;
+			if (pos->z < min.z) min.z = pos->z;
+		}
+
+		mesh->EndRead();
+	}
+
+	aabb.max = max;
+	aabb.min = min;
+
+	aabbCreated = true;
 }
 
 void EntityBase::BindMaterialData(EffectBinder * binder, Material & mat)
@@ -167,3 +215,25 @@ Material * EntityBase::GetMaterial(unsigned int subset)
 	return &materials[subset];
 }
 
+
+XMFLOAT4X4 EntityBase::GetWorldMatrix()
+{
+	SetUpShaderData();
+
+	return data.worldMatrix;
+}
+
+BoundingSphere EntityBase::GetBoundingSphere()
+{
+	if (!bSphereCreated)
+		BuildBoundingSphere();
+
+	return bSphere;
+}
+AABB EntityBase::GetAABB()
+{
+	if (!aabbCreated)
+		BuildAABB();
+
+	return aabb;
+}

@@ -1,39 +1,39 @@
 #pragma once 
 #include "Common.h"
-#include <Windows.h>
-#include <dinput.h>
+#include <SDL.h>
+
 
 enum EXPORT MouseButton
 {
 	B_LEFT = 0,
-	B_RIGHT
+	B_RIGHT = 2
 };
 
 class EXPORT InputManager
 {
-	IDirectInput8 * inputDevice;
-	IDirectInputDevice8 * keyboard;
-	IDirectInputDevice8 * mouse;
 
-	DIMOUSESTATE mState;
+	SDL_Event lastEvent;
+	SDL_Event currentEvent;
 
 	int mouseX, mouseY;
 	bool mouseMove;
-	unsigned char keys[256];
+	bool keys[282];
+
+	unsigned int widht, height;
 
 	bool firstInit;
-	HWND hwnd;
 
-	bool lastStateDown[4];
-	bool currentStateDown[4];
+	bool lastStateDown[3];
+	bool currentStateDown[3];
 public:
 	InputManager();
 	~InputManager();
 
-	void Init(HWND handle,HINSTANCE hInstance);
-	void Update();
+	void Init();
+	void Update(SDL_Event evt);
+	void PreUpdate();
 
-	bool KeyPressed(UINT key);
+	bool KeyPressed(unsigned int key);
 	bool MouseButtonDown(MouseButton button);
 	bool MouseButtonClick(MouseButton button);
 	bool MouseMove();

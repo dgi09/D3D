@@ -2,11 +2,18 @@
 #include "Common.h"
 #include <d3d11.h>
 #include <Windows.h>
+#include <SDL.h>
+#include "InputManager.h"
 
 class EXPORT Scene;
 
 class EXPORT Window
 {
+
+	SDL_Window * sdlWindow;
+	SDL_Event ev;
+
+
 	HWND handle;
 	ID3D11DeviceContext * context;
 	ID3D11Device * device;
@@ -25,6 +32,7 @@ class EXPORT Window
 	MSG msg;
 
 	Scene * scene;
+	InputManager * inputManager;
 
 	Window(void);
 	~Window(void);
@@ -32,7 +40,7 @@ class EXPORT Window
 
 public:
 	
-	static Window * Create(int width,int height,LPCWSTR caption, int showCmd);
+	static Window * Create(int width,int height,const char* caption);
 	static Window * Create(int width,int height,HWND handle);
 	static void Destroy(Window * window);
 	
@@ -47,6 +55,7 @@ public:
 	HWND GetHandle();
 
 	Scene * GetScene();
+	InputManager * GetInputManager();
 
 protected:
 	void InitD3D(HWND handle,int width,int height);

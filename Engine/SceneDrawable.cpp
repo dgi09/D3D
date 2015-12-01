@@ -1,10 +1,5 @@
 #include "SceneDrawable.h"
 
-BoundingSphere SceneDrawable::GetBoundingSphere()
-{
-	sphere.position = GetPosition();
-	return sphere;
-}
 
 void SceneDrawable::SetVisible(bool val)
 {

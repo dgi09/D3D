@@ -173,23 +173,31 @@ void Camera::CalcPickingRay(float localX, float localY)
 
 	SetUpData();
 
-	float pointX = ((2.0f * localX) / width) - 1.0f;
-	float pointY = (((2.0f * localY) / height) - 1.0f) * -1.0f;
-
 	XMMATRIX view = XMLoadFloat4x4(&shaderData.view);
-	XMMATRIX proj = XMLoadFloat4x4(&shaderData.projection);
+	//XMMATRIX proj = XMLoadFloat4x4(&shaderData.projection);
 
-	XMVECTOR in = XMVectorSet(pointX, pointY, 0.0f, 1.0f);
+	/*XMVECTOR in = XMVectorSet(localX, localY, 0.0f, 0.0f);
 
 
-	XMVECTOR res1 = XMVector3Unproject(in, 0, 0, width, height, nearDistance, farDistance, proj, view, XMMatrixIdentity());
+	XMVECTOR res1 = XMVector3Unproject(in, 0, 0, width, height, 0.0f, 1.0f, proj, view, XMMatrixIdentity());
 
-	in = XMVectorSet(pointX, pointY, 1.0f, 1.0f);
+	in = XMVectorSet(localX, localY, 1.0f, 0.0f);
 
-	XMVECTOR res2 = XMVector3Unproject(in, 0, 0, width, height, nearDistance, farDistance, proj, view, XMMatrixIdentity());
+	XMVECTOR res2 = XMVector3Unproject(in, 0, 0, width, height, 0.0f, 1.0f, proj, view, XMMatrixIdentity());
+	XMStoreFloat3((XMFLOAT3*)&pickRayDirection,XMVector3Normalize(res2 - res1));*/
 
-	XMStoreFloat3((XMFLOAT3*)&pickRayDirection, res2 - res1);
 
+	float pointX = (2.0f * localX / width - 1.0f) / shaderData.projection._11;
+	float pointY = (-2.0f * localY / height + 1.0f) / shaderData.projection._22;
+
+	XMVECTOR dir = XMVectorSet(pointX, pointY, 1.0f, 0.0f);
+
+	XMVECTOR det = XMMatrixDeterminant(view);
+	XMMATRIX viewInv = XMMatrixInverse(&det, view);
+
+	dir = XMVector3TransformNormal(dir, viewInv);
+
+	XMStoreFloat3((XMFLOAT3*)&pickRayDirection, XMVector3Normalize(dir));
 
 }
 

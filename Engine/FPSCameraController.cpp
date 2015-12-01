@@ -1,7 +1,5 @@
 #include "FPSCameraController.h"
 #include "Camera.h"
-#include <dinput.h>
-#include <DirectXMath.h>
 
 using namespace DirectX;
 
@@ -16,8 +14,8 @@ void FPSCameraController::Update(InputManager & input)
 {
 	Camera * camera = cam.Get();
 
-	if(input.KeyPressed(DIK_UPARROW) || input.KeyPressed(DIK_DOWNARROW) || input.KeyPressed(DIK_LEFTARROW)
-		|| input.KeyPressed(DIK_RIGHTARROW))
+	if (input.KeyPressed(SDL_SCANCODE_LEFT) || input.KeyPressed(SDL_SCANCODE_RIGHT) || input.KeyPressed(SDL_SCANCODE_UP)
+		|| input.KeyPressed(SDL_SCANCODE_DOWN))
 	{
 
 		Vector3 lookNormal  = camera->GetLookDirection().Normalize();
@@ -31,13 +29,13 @@ void FPSCameraController::Update(InputManager & input)
 		camPos = camera->GetPosition();
 		camLookAt = camera->GetLookAt();
 
-		if(input.KeyPressed(DIK_UPARROW))
+		if (input.KeyPressed(SDL_SCANCODE_UP))
 		{
 			
 			camPos = camPos + lookNormal;
 			camLookAt = camLookAt + lookNormal;
 		}
-		if(input.KeyPressed(DIK_DOWNARROW))
+		if (input.KeyPressed(SDL_SCANCODE_DOWN))
 		{
 			lookNormal = lookNormal * -1;
 
@@ -45,14 +43,14 @@ void FPSCameraController::Update(InputManager & input)
 			camLookAt = camLookAt + lookNormal;
 		}
 
-		if(input.KeyPressed(DIK_LEFTARROW))
+		if (input.KeyPressed(SDL_SCANCODE_LEFT))
 		{
 			rightNormal = rightNormal * -1;
 
 			camPos = camPos + rightNormal;
 			camLookAt = camLookAt + rightNormal;
 		}
-		if(input.KeyPressed(DIK_RIGHTARROW))
+		if (input.KeyPressed(SDL_SCANCODE_RIGHT))
 		{
 			camPos = camPos + rightNormal;
 			camLookAt = camLookAt + rightNormal;
