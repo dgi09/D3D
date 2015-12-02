@@ -9,6 +9,7 @@
 *.vcxproj
 *.filters
 *.user
+*.dll
 *.userosscache
 *.sln.docstates
 
