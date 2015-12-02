@@ -4,18 +4,29 @@
 using namespace DirectX;
 
 
+FPSCameraController::FPSCameraController()
+{
+	for (int i = 0; i < 4; i++)
+	{
+		keyDown[i] = false;
+	}
+
+	mouseButtonDown[0] = mouseButtonDown[1] = false;
+	mouseMove = false;
+}
+
 void FPSCameraController::SetCamera(CameraPtr camera)
 {
 	cam = camera;
 	drag = true;
 }
 
-void FPSCameraController::Update(InputManager & input)
+void FPSCameraController::Update()
 {
 	Camera * camera = cam.Get();
 
-	if (input.KeyPressed(SDL_SCANCODE_LEFT) || input.KeyPressed(SDL_SCANCODE_RIGHT) || input.KeyPressed(SDL_SCANCODE_UP)
-		|| input.KeyPressed(SDL_SCANCODE_DOWN))
+	if (keyDown[FPSBind_Key_Left] || keyDown[FPSBind_Key_Right] || keyDown[FPSBind_Key_Up]
+		|| keyDown[FPSBind_Key_Down])
 	{
 
 		Vector3 lookNormal  = camera->GetLookDirection().Normalize();
@@ -29,13 +40,13 @@ void FPSCameraController::Update(InputManager & input)
 		camPos = camera->GetPosition();
 		camLookAt = camera->GetLookAt();
 
-		if (input.KeyPressed(SDL_SCANCODE_UP))
+		if (keyDown[FPSBind_Key_Up])
 		{
 			
 			camPos = camPos + lookNormal;
 			camLookAt = camLookAt + lookNormal;
 		}
-		if (input.KeyPressed(SDL_SCANCODE_DOWN))
+		if (keyDown[FPSBind_Key_Down])
 		{
 			lookNormal = lookNormal * -1;
 
@@ -43,14 +54,14 @@ void FPSCameraController::Update(InputManager & input)
 			camLookAt = camLookAt + lookNormal;
 		}
 
-		if (input.KeyPressed(SDL_SCANCODE_LEFT))
+		if (keyDown[FPSBind_Key_Left])
 		{
 			rightNormal = rightNormal * -1;
 
 			camPos = camPos + rightNormal;
 			camLookAt = camLookAt + rightNormal;
 		}
-		if (input.KeyPressed(SDL_SCANCODE_RIGHT))
+		if (keyDown[FPSBind_Key_Right])
 		{
 			camPos = camPos + rightNormal;
 			camLookAt = camLookAt + rightNormal;
@@ -60,23 +71,23 @@ void FPSCameraController::Update(InputManager & input)
 		camera->LookAt(camLookAt);
 	}
 
-	if(input.MouseButtonDown(B_RIGHT) && !drag)
+	if(mouseButtonDown[FPSBind_Mouse_Right] && !drag)
 	{
 		drag = true;
-		lastMouseX = input.GetMouseX();
-		lastMouseY = input.GetMouseY();
+		lastMouseX = mouseX;
+		lastMouseY = mouseY;
 	}
 	
-	if(!input.MouseButtonDown(B_RIGHT))
+	if (!mouseButtonDown[FPSBind_Mouse_Right])
 	{
 		drag = false;
 	}
 	
 
-	if(drag && input.MouseMove())
+	if(drag && mouseMove)
 	{
-		int offSetX = input.GetMouseX() - lastMouseX;
-		int offSetY = input.GetMouseY() - lastMouseY;
+		int offSetX = mouseX - lastMouseX;
+		int offSetY = mouseY - lastMouseY;
 
 		Vector3 lat = camera->GetLookDirection();
 		Vector3 camPos = camera->GetPosition();
@@ -102,8 +113,8 @@ void FPSCameraController::Update(InputManager & input)
 
 		camera->LookAt(camPos + res);
 
-		lastMouseX = input.GetMouseX();
-		lastMouseY = input.GetMouseY();
+		lastMouseX = mouseX;
+		lastMouseY = mouseY;
 		
 	}
 	
@@ -112,4 +123,33 @@ void FPSCameraController::Update(InputManager & input)
 void FPSCameraController::SetMovementSpeed(float speed)
 {
 	movementSpeed = speed;
+}
+
+void FPSCameraController::InjectKeyDown(FPSControllerBind key)
+{
+	keyDown[key] = true;
+}
+
+void FPSCameraController::InjectKeyUp(FPSControllerBind key)
+{
+	keyDown[key] = false;
+}
+
+void FPSCameraController::InjectMouseDown(FPSControllerBind button)
+{
+	mouseButtonDown[button] = true;
+}
+void FPSCameraController::InjectMouseUp(FPSControllerBind button)
+{
+	mouseButtonDown[button] = false;
+}
+
+void FPSCameraController::InjectMouseMove(bool val)
+{
+	mouseMove = val;
+}
+void FPSCameraController::InjectMousePos(unsigned int x, unsigned int y)
+{
+	mouseX = x;
+	mouseY = y;
 }

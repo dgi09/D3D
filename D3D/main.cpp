@@ -85,7 +85,31 @@ int main(int argc, char** argv)
 
 		test->Update();
 
-		fps.Update(*mgr);
+		if (mgr->KeyPressed(SDL_SCANCODE_LEFT))
+			fps.InjectKeyDown(FPSBind_Key_Left);
+		else fps.InjectKeyUp(FPSBind_Key_Left);
+
+		if (mgr->KeyPressed(SDL_SCANCODE_RIGHT))
+			fps.InjectKeyDown(FPSBind_Key_Right);
+		else fps.InjectKeyUp(FPSBind_Key_Right);
+
+		if (mgr->KeyPressed(SDL_SCANCODE_UP))
+			fps.InjectKeyDown(FPSBind_Key_Up);
+		else fps.InjectKeyUp(FPSBind_Key_Up);
+
+		if (mgr->KeyPressed(SDL_SCANCODE_DOWN))
+			fps.InjectKeyDown(FPSBind_Key_Down);
+		else fps.InjectKeyUp(FPSBind_Key_Down);
+
+		if (mgr->MouseButtonDown(B_RIGHT))
+			fps.InjectMouseDown(FPSBind_Mouse_Right);
+		else fps.InjectMouseUp(FPSBind_Mouse_Right);
+
+		fps.InjectMouseMove(mgr->MouseMove());
+
+		fps.InjectMousePos(mgr->GetMouseX(), mgr->GetMouseY());
+			
+		fps.Update();
 
 		scene->DrawAll();
 

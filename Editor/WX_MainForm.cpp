@@ -16,7 +16,7 @@ WX_MainForm::WX_MainForm( wxWindow* parent, wxWindowID id, const wxString& title
 	wxBoxSizer* bsMain;
 	bsMain = new wxBoxSizer( wxHORIZONTAL );
 	
-	pDrawPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( 900,600 ), wxTAB_TRAVERSAL, wxT("pnlDraw") );
+	pDrawPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( 900,600 ), 0, wxT("pnlDraw") );
 	wxBoxSizer* bsDrawPanel;
 	bsDrawPanel = new wxBoxSizer( wxVERTICAL );
 	

@@ -1,7 +1,8 @@
 #pragma once 
 #include "WX_MainForm.h"
 #include "DrawPanel.h"
-
+#include "FPSCameraController.h"
+#include "FPSCameraUpdateable.h"
 
 class MainForm
 {
@@ -9,6 +10,8 @@ class MainForm
 	DrawPanel * drawPanel;
 	Scene * scene;
 
+	FPSCameraController cameraController;
+	FPSCameraUpdateable * updateableComponent;
 public:
 
 	MainForm();
@@ -20,7 +23,9 @@ private:
 
 	void InitScene();
 
-	void OnAddStaticEntity_Click(wxMouseEvent &evt);
+	void DrawPanel_MouseEvent(MouseEvent & evt);
+	void DrawPanel_KeyboardEvent(KeyboardEvent & evt);
 
+	void OnAddStaticEntity_Click(wxMouseEvent &evt);
 
 };
