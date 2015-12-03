@@ -9,7 +9,7 @@ protected:
 	SingletonTemplate();
 public:
 
-	inline static T * GetPtr();
+	static T * GetPtr();
 	static void Destroy();
 };
 
@@ -19,12 +19,13 @@ T * SingletonTemplate<T>::ptr = nullptr;
 template <class T>
 SingletonTemplate<T>::SingletonTemplate()
 {
-	ptr = static_cast<T*>(this);
+	
 }
 
 template <class T>
 T * SingletonTemplate<T>::GetPtr()
 {
+	if (ptr == nullptr) ptr = new T;
 
 	return ptr;
 }

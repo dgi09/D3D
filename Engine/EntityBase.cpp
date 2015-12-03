@@ -28,9 +28,14 @@ void EntityBase::BindEntityData(EffectBinder * binder)
 
 }
 
+void EntityBase::CalculateTransform(bool val)
+{
+	calcTransform = val;
+}
+
 void EntityBase::SetUpShaderData()
 {
-	if(isPositionChanged || isRotationChanged || isScaleChanged)
+	if(calcTransform && (isPositionChanged || isRotationChanged || isScaleChanged))
 	{
 		XMFLOAT3 rotRad;
 		rotRad.x = XMConvertToRadians(rotation.x);
@@ -102,7 +107,7 @@ void EntityBase::Init(ModelHandler model,ResourceManager * resMgr, DeviceDependa
 	EffectMaskUtil::Bind(effectMask,MATERIAL);
 
 	SetVisible(true);
-
+	CalculateTransform(true);
 	Illuminate(false);
 
 }
@@ -236,4 +241,10 @@ AABB EntityBase::GetAABB()
 		BuildAABB();
 
 	return aabb;
+}
+
+
+void EntityBase::SetTransform(DirectX::XMFLOAT4X4 transform)
+{
+	data.worldMatrix = transform;
 }

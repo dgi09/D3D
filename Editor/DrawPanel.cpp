@@ -83,6 +83,9 @@ void DrawPanel::LeftMouseButtonDown(wxMouseEvent & e)
 	ev.y = e.GetY();
 	
 	wxControl->SetFocus();
+	
+	mouseButtonDown = true;
+	mouseMoveAfterClick = false;
 
 	mouseEventHandler(ev);
 }
@@ -97,9 +100,15 @@ void DrawPanel::LeftMouseButtonUp(wxMouseEvent & e)
 
 	mouseEventHandler(ev);
 
-	ev.type = MET_CLICK;
+	mouseButtonDown = false;
 
-	mouseEventHandler(ev);
+	if (!mouseMoveAfterClick)
+	{
+		ev.type = MET_CLICK;
+		mouseEventHandler(ev);
+
+		mouseMoveAfterClick = false;
+	}
 }
 
 void DrawPanel::RightMouseButtonDown(wxMouseEvent & e)
@@ -113,6 +122,9 @@ void DrawPanel::RightMouseButtonDown(wxMouseEvent & e)
 	wxControl->SetFocus();
 
 	mouseEventHandler(ev);
+
+	mouseButtonDown = true;
+	mouseMoveAfterClick = false;
 }
 
 void DrawPanel::RightMouseButtonUp(wxMouseEvent & e)
@@ -125,9 +137,17 @@ void DrawPanel::RightMouseButtonUp(wxMouseEvent & e)
 
 	mouseEventHandler(ev);
 
-	ev.type = MET_CLICK;
+	mouseButtonDown = false;
 
-	mouseEventHandler(ev);
+	if (!mouseMoveAfterClick)
+	{
+		ev.type = MET_CLICK;
+
+		mouseEventHandler(ev);
+
+		mouseMoveAfterClick = false;
+	}
+	
 }
 
 void DrawPanel::MouseMotion(wxMouseEvent & e)
@@ -136,6 +156,9 @@ void DrawPanel::MouseMotion(wxMouseEvent & e)
 	ev.type = MET_MOTION;
 	ev.x = e.GetX();
 	ev.y = e.GetY();
+
+	if (mouseButtonDown)
+		mouseMoveAfterClick = true;
 
 	mouseEventHandler(ev);
 }

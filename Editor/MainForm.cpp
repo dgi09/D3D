@@ -1,11 +1,16 @@
 #include "MainForm.h"
 #include "CreateEntityDialog.h"
 #include "EditorUpdateableManager.h"
+#include "EditorEntity.h"
+#include "EntityBase_StaticEntity.h"
+#include "EditorSceneObjectsManager.h"
+#include "MainScene.h"
+#include "SelectableObjectsManager.h"
 
 MainForm::MainForm()
 {
 	updateableComponent = new FPSCameraUpdateable(&cameraController);
-	EditorUpdateableManager::GetPtr()->AddUpdateable(updateableComponent);
+	EditorUpdateableManager::GetPtr()->AddElement(updateableComponent);
 
 
 	wxForm = new WX_MainForm(NULL);
@@ -43,8 +48,8 @@ void MainForm::OnAddStaticEntity_Click(wxMouseEvent &evt)
 	if(res == OK)
 	{
 
-		AnimatedEntityPtr enPtr = scene->AddAnimatedEntity(dialog.GetFilePath(),dialog.GetName());
-		AnimatedEntity * en = enPtr.Get();
+		StaticEntityPtr enPtr = scene->AddStaticEntity(dialog.GetFilePath(),dialog.GetName());
+		StaticEntity * en = enPtr.Get();
 		en->SetPosition(0.0f,0.0f,0.0f);
 		en->Illuminate(false);
 		en->SetScale(10.0f,10.0f,10.0f);
@@ -57,6 +62,10 @@ void MainForm::OnAddStaticEntity_Click(wxMouseEvent &evt)
 		mat->SetEmmisivePower(6);
 		mat->SetSpecularPower(240);
 		mat->SetSpecularIntesity(5);
+
+
+		EditorEntity * entity = new EditorEntity(new EntityBase_StaticEntity(enPtr));
+		EditorSceneObjectsManager::GetPtr()->AddElement(entity);
 	}
 
 }
@@ -75,7 +84,8 @@ void MainForm::InitScene()
 	scene->SetGlobalAmbient(0.03f, 0.03f, 0.03f, 1.0f);
 	scene->SetBackgroundColor(Color::Blue());
 
-
+	MainScene::Set(scene);
+	
 	CameraPtr camPtr = scene->AddCamera();
 	Camera * cam = camPtr.Get();
 
@@ -84,7 +94,7 @@ void MainForm::InitScene()
 	cam->LookAt(0.0f,0.0f,0.0f);
 	cam->SetNearDistance(2.0f);
 	cam->SetFarDistance(1000.0f);
-	cam->SetFOV(90.0f);
+	cam->SetFOV(45.0f);
 
 	scene->SetActiveCamera(camPtr);
 
@@ -118,6 +128,18 @@ void MainForm::DrawPanel_MouseEvent(MouseEvent & evt)
 	else cameraController.InjectMouseMove(false);
 
 	cameraController.InjectMousePos(evt.x, evt.y);
+
+
+	if (evt.type == MET_CLICK)
+	{
+		Camera * cam = scene->GetActiveCamera().Get();
+		cam->CalcPickingRay((float)evt.x, (float)evt.y);
+		
+		Vector3 org = cam->GetPosition();
+		Vector3 dir = cam->GetPickingRayDirection();
+
+		SelectableObjectsManager::GetPtr()->TrySelect(org, dir);
+	}
 }
 
 void MainForm::DrawPanel_KeyboardEvent(KeyboardEvent & evt)

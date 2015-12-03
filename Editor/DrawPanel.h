@@ -11,6 +11,9 @@ class DrawPanel
 	Window * window;
 	Scene * scene;
 
+	bool mouseMoveAfterClick;
+	bool mouseButtonDown;
+
 	std::function<void(MouseEvent & evt)> mouseEventHandler;
 	std::function<void(KeyboardEvent & evt)> keyboardEventHandler;
 

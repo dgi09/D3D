@@ -42,7 +42,7 @@ protected:
 	AABB aabb;
 
 	bool bSphereCreated, aabbCreated;
-
+	bool calcTransform;
 public:
 	virtual void Draw(EffectBinder * binder) = 0;
 
@@ -61,7 +61,8 @@ public:
 	BoundingSphere GetBoundingSphere();
 	AABB GetAABB();
 
-
+	void CalculateTransform(bool val);
+	void SetTransform(DirectX::XMFLOAT4X4 transform);
 protected:
 	void BindEntityData(EffectBinder * binder);
 	void BindMaterialData(EffectBinder * binder, Material & mat);

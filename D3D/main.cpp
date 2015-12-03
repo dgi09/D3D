@@ -49,7 +49,7 @@ int main(int argc, char** argv)
 	Camera * cam = camPtr.Get();
 
 
-	cam->SetPosition(0.0f,0.0f,-5.0f);
+	cam->SetPosition(0.0f,0.0f,-100.0f);
 	cam->LookAt(0.0f,0.0f,0.0f);
 	cam->SetNearDistance(2.0f);
 	cam->SetFarDistance(50000.0f);
@@ -69,7 +69,7 @@ int main(int argc, char** argv)
 
 	FPSCameraController fps;
 	fps.SetCamera(camPtr);
-	fps.SetMovementSpeed(2.0f);
+	fps.SetMovementSpeed(1.0f);
 
 
 

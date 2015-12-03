@@ -14,7 +14,6 @@ IMPLEMENT_APP(MyApp)
 
 bool MyApp::OnInit()
 {
-	new EditorUpdateableManager();
 	form = new MainForm();
 
 	form->Init();
