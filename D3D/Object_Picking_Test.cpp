@@ -25,6 +25,15 @@ void Object_Picking_Test::Init(Scene * scene)
 	dog->SetPosition(0.0f, 0.0, 0.0f);
 	dog->SetScale(100.0f, 100.0f, 100.0f);
 	dogBBox.Get()->SetScale(100.0f, 100.0f, 100.0f);
+	//dogBBox.Get()->CalculateTransform(false);
+
+	
+	DirectX::XMFLOAT4X4 dogMat = dog->GetWorldMatrix();
+
+	dogBBox.Get()->CalculateTransform(false);
+	dogBBox.Get()->SetTransform(dogMat);
+
+	DirectX::XMFLOAT4X4 boxMat = dogBBox.Get()->GetWorldMatrix();
 
 	//dog->SetRotation(0.0f, -60.0f, 180.0f);
 	//dog->SetRotationY(45.0f);

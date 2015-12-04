@@ -2,6 +2,8 @@
 #include "MainScene.h"
 #include <DirectXMath.h>
 #include "SelectableObjectsManager.h"
+#include "ActiveMoveable.h"
+
 
 using namespace DirectX;
 
@@ -16,6 +18,7 @@ void EditorEntity::OnAdd()
 	bboxEntity.Get()->SetVisible(false);
 
 	SelectableObjectsManager::GetPtr()->AddElement(this);
+	SelectableObjectsManager::GetPtr()->RawSelect(this);
 }
 void EditorEntity::OnRemove()
 {
@@ -56,9 +59,14 @@ bool EditorEntity::Select(Vector3 rayOrigin, Vector3 rayDirection)
 }
 void EditorEntity::OnSelect()
 {
-	bboxEntity.Get()->SetVisible(!bboxEntity.Get()->IsVisible());
+	bboxEntity.Get()->SetVisible(true);
+	ActiveMoveable::Set(this);
 }
 
+void EditorEntity::OnFocusOut()
+{
+	bboxEntity.Get()->SetVisible(false);
+}
 void EditorEntity::CreateBBox()
 {
 	AABB bbox = entityBase->GetBase()->GetAABB();
@@ -132,4 +140,11 @@ void EditorEntity::CreateBBox()
 	Material * mat = ent->GetMaterial(0);
 
 	mat->SetDiffuseColor(Color::Blue());
+}
+
+void EditorEntity::Move(Vector3 offset)
+{
+	entityBase->GetBase()->Move(offset.x, offset.y, offset.z);
+
+	bboxEntity.Get()->SetTransform(entityBase->GetBase()->GetWorldMatrix());
 }

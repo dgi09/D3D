@@ -11,7 +11,9 @@ class SelectableObjectsManager : public SingletonTemplate<SelectableObjectsManag
 	SelectableObjectsManager();
 	~SelectableObjectsManager();
 
+	ISelectable * current;
 public:
 
 	void TrySelect(Vector3 rayOrigin, Vector3 rayDirection);
+	void RawSelect(ISelectable * selectable);
 };

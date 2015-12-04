@@ -6,11 +6,15 @@
 #include "EditorSceneObjectsManager.h"
 #include "MainScene.h"
 #include "SelectableObjectsManager.h"
+#include "ActiveTool.h"
+#include "SelectTool.h"
+#include "MoveTool.h"
 
 MainForm::MainForm()
 {
 	updateableComponent = new FPSCameraUpdateable(&cameraController);
 	EditorUpdateableManager::GetPtr()->AddElement(updateableComponent);
+	ActiveTool::Set(new SelectTool());
 
 
 	wxForm = new WX_MainForm(NULL);
@@ -55,17 +59,23 @@ void MainForm::OnAddStaticEntity_Click(wxMouseEvent &evt)
 		en->SetScale(10.0f,10.0f,10.0f);
 		en->SetRotationY(90.0f);
 
-		Material * mat = en->GetMaterial(0);
-		mat->UseDiffuseMap(false);
-		mat->SetDiffuseColor(Color::Red());
+		for (unsigned int i = 0; i < en->GetNumberOfMaterials(); i++)
+		{
+			Material * mat = en->GetMaterial(i);
+			mat->UseDiffuseMap(false);
+			mat->SetDiffuseColor(Color::Red());
 
-		mat->SetEmmisivePower(6);
-		mat->SetSpecularPower(240);
-		mat->SetSpecularIntesity(5);
+			mat->SetEmmisivePower(6);
+			mat->SetSpecularPower(240);
+			mat->SetSpecularIntesity(5);
+		}
+		
 
 
 		EditorEntity * entity = new EditorEntity(new EntityBase_StaticEntity(enPtr));
 		EditorSceneObjectsManager::GetPtr()->AddElement(entity);
+
+		ActiveTool::Set(new SelectTool);
 	}
 
 }
@@ -93,7 +103,7 @@ void MainForm::InitScene()
 	cam->SetPosition(0.0f,90.0f,-130.0f);
 	cam->LookAt(0.0f,0.0f,0.0f);
 	cam->SetNearDistance(2.0f);
-	cam->SetFarDistance(1000.0f);
+	cam->SetFarDistance(10000.0f);
 	cam->SetFOV(45.0f);
 
 	scene->SetActiveCamera(camPtr);
@@ -130,16 +140,8 @@ void MainForm::DrawPanel_MouseEvent(MouseEvent & evt)
 	cameraController.InjectMousePos(evt.x, evt.y);
 
 
-	if (evt.type == MET_CLICK)
-	{
-		Camera * cam = scene->GetActiveCamera().Get();
-		cam->CalcPickingRay((float)evt.x, (float)evt.y);
-		
-		Vector3 org = cam->GetPosition();
-		Vector3 dir = cam->GetPickingRayDirection();
-
-		SelectableObjectsManager::GetPtr()->TrySelect(org, dir);
-	}
+	ActiveTool::OnMouseEvent(evt);
+	
 }
 
 void MainForm::DrawPanel_KeyboardEvent(KeyboardEvent & evt)
@@ -172,5 +174,19 @@ void MainForm::DrawPanel_KeyboardEvent(KeyboardEvent & evt)
 				else
 					if (evt.keyCode == WXK_DOWN)
 						cameraController.InjectKeyUp(FPSBind_Key_Down);
+
+		if (evt.keyCode == WXK_CONTROL)
+		{
+			ActiveTool::Set(new MoveTool());
+		}
+
+		if (evt.keyCode == 'S')
+		{
+			ActiveTool::Set(new SelectTool());
+		}
 	}
+
+	
+
+	ActiveTool::OnKeyboardEvent(evt);
 }

@@ -58,14 +58,14 @@ int main(int argc, char** argv)
 	scene->SetActiveCamera(camPtr);
 
 
-	ITest * test = new Dragon_Dogs_ParticleSystem;
+	ITest * test = new Object_Picking_Test;
 	test->Init(scene);
 	
 	
 	InputManager * mgr = window->GetInputManager();
 
 
-	//((Object_Picking_Test*)test)->SetInputMgr(mgr);
+	((Object_Picking_Test*)test)->SetInputMgr(mgr);
 
 	FPSCameraController fps;
 	fps.SetCamera(camPtr);

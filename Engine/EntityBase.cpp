@@ -220,6 +220,10 @@ Material * EntityBase::GetMaterial(unsigned int subset)
 	return &materials[subset];
 }
 
+unsigned int EntityBase::GetNumberOfMaterials()
+{
+	return materials.size();
+}
 
 XMFLOAT4X4 EntityBase::GetWorldMatrix()
 {
@@ -247,4 +251,5 @@ AABB EntityBase::GetAABB()
 void EntityBase::SetTransform(DirectX::XMFLOAT4X4 transform)
 {
 	data.worldMatrix = transform;
+	shaderData.FillWorldMatrixBuffer(data.worldMatrix);
 }

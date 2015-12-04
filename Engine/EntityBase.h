@@ -55,6 +55,7 @@ public:
 	void Init(ModelHandler model,ResourceManager * resMgr, DeviceDependableFactory * factory);
 
 	Material * GetMaterial(unsigned int subset);
+	unsigned int GetNumberOfMaterials();
 
 	DirectX::XMFLOAT4X4 GetWorldMatrix();
 
