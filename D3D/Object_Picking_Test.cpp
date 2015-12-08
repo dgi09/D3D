@@ -22,8 +22,9 @@ void Object_Picking_Test::Init(Scene * scene)
 	StaticEntity * dog = dogPtr2.Get();
 
 	dog->Illuminate(false);
-	dog->SetPosition(0.0f, 0.0, 0.0f);
+	dog->SetPosition(20.0f, 0.0, 0.0f);
 	dog->SetScale(100.0f, 100.0f, 100.0f);
+	dog->SetRotationY(40.0f);
 	dogBBox.Get()->SetScale(100.0f, 100.0f, 100.0f);
 	//dogBBox.Get()->CalculateTransform(false);
 
@@ -97,6 +98,9 @@ void Object_Picking_Test::RunTest(float mX, float mY)
 		XMFLOAT4X4 mat = ent->GetWorldMatrix();
 
 		XMMATRIX world = XMLoadFloat4x4((XMFLOAT4X4*)&mat);
+
+		world = XMMatrixTranspose(world);
+
 		XMVECTOR det = XMMatrixDeterminant(world);
 
 		XMMATRIX invWorld = XMMatrixInverse(&det, world);
@@ -113,6 +117,16 @@ void Object_Picking_Test::RunTest(float mX, float mY)
 		XMStoreFloat3((XMFLOAT3*)&dir, dirInv);
 
 		AABB bbox = ent->GetAABB();
+
+		/*XMVECTOR max = XMLoadFloat3((XMFLOAT3*)&bbox.max);
+		XMVECTOR min = XMLoadFloat3((XMFLOAT3*)&bbox.min);
+
+		max = XMVector3TransformCoord(max, world);
+		min = XMVector3TransformCoord(min, world);
+
+		XMStoreFloat3((XMFLOAT3*)&bbox.max, max);
+		XMStoreFloat3((XMFLOAT3*)&bbox.min, min);*/
+
 		if (bbox.RayIntersact(org, dir))
 		{
 			obj.bbox.Get()->SetVisible(!obj.bbox.Get()->IsVisible());

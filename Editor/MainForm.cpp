@@ -54,7 +54,7 @@ void MainForm::OnAddStaticEntity_Click(wxMouseEvent &evt)
 
 		StaticEntityPtr enPtr = scene->AddStaticEntity(dialog.GetFilePath(),dialog.GetName());
 		StaticEntity * en = enPtr.Get();
-		en->SetPosition(0.0f,0.0f,0.0f);
+		en->SetPosition(10.0f,10.0f,0.0f);
 		en->Illuminate(false);
 		en->SetScale(10.0f,10.0f,10.0f);
 		en->SetRotationY(90.0f);

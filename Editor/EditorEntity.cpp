@@ -33,9 +33,12 @@ void EditorEntity::OnRemove()
 bool EditorEntity::Select(Vector3 rayOrigin, Vector3 rayDirection)
 {
 
+
 	XMFLOAT4X4 mat = entityBase->GetBase()->GetWorldMatrix();
 
 	XMMATRIX world = XMLoadFloat4x4((XMFLOAT4X4*)&mat);
+	world = XMMatrixTranspose(world);
+
 	XMVECTOR det = XMMatrixDeterminant(world);
 
 	XMMATRIX invWorld = XMMatrixInverse(&det, world);
@@ -52,7 +55,6 @@ bool EditorEntity::Select(Vector3 rayOrigin, Vector3 rayDirection)
 	XMStoreFloat3((XMFLOAT3*)&dir, dirInv);
 
 	AABB bbox = entityBase->GetBase()->GetAABB();
-
 
 	return bbox.RayIntersact(org, dir);
 	

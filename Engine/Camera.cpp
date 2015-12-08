@@ -197,8 +197,7 @@ void Camera::CalcPickingRay(float localX, float localY)
 
 	dir = XMVector3TransformNormal(dir, viewInv);
 
-	XMStoreFloat3((XMFLOAT3*)&pickRayDirection, XMVector3Normalize(dir));
-
+	XMStoreFloat3((XMFLOAT3*)&pickRayDirection,XMVector3Normalize(dir));
 }
 
 Vector3 Camera::GetPickingRayOrigin()

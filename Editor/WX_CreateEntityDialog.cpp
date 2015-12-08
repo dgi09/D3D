@@ -67,8 +67,8 @@ WX_CreateEntityDialog::WX_CreateEntityDialog( wxWindow* parent, wxWindowID id, c
 	this->Centre( wxBOTH );
 	
 	// Connect Events
-	btnOK->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( WX_CreateEntityDialog::OnOKClicked ), NULL, this );
-	btnCancel->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( WX_CreateEntityDialog::OnCancelClicked ), NULL, this );
+	btnOK->Connect( wxEVT_LEFT_UP, wxMouseEventHandler( WX_CreateEntityDialog::OnOKClicked ), NULL, this );
+	btnCancel->Connect( wxEVT_LEFT_UP, wxMouseEventHandler( WX_CreateEntityDialog::OnCancelClicked ), NULL, this );
 }
 
 WX_CreateEntityDialog::~WX_CreateEntityDialog()

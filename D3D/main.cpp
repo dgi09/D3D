@@ -11,6 +11,7 @@
 #include <time.h>
 #include "InputManager.h"
 #include "FPSCameraController.h"
+#include "ArcBallCameraController.h"
 #include "ModelCreator.h"
 
 
@@ -23,6 +24,11 @@
 #undef main
 
 #define LOOP_STYLE
+
+#define FPS_CONTROLLER 0
+#define ARC_BALL_CONTROLLER 1
+
+#define CAM_CONTROLLER FPS_CONTROLLER
 
 //int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd )
 int main(int argc, char** argv)
@@ -67,10 +73,15 @@ int main(int argc, char** argv)
 
 	((Object_Picking_Test*)test)->SetInputMgr(mgr);
 
+
+#if CAM_CONTROLLER == FPS_CONTROLLER
 	FPSCameraController fps;
 	fps.SetCamera(camPtr);
 	fps.SetMovementSpeed(1.0f);
-
+#else 
+	ArcBallCameraController arc;
+	arc.SetCamera(camPtr);
+#endif
 
 
 #ifdef LOOP_STYLE
@@ -84,6 +95,7 @@ int main(int argc, char** argv)
 	
 
 		test->Update();
+#if CAM_CONTROLLER == FSP_CONTROLLER
 
 		if (mgr->KeyPressed(SDL_SCANCODE_LEFT))
 			fps.InjectKeyDown(FPSBind_Key_Left);
@@ -111,6 +123,20 @@ int main(int argc, char** argv)
 			
 		fps.Update();
 
+#else 
+		if (mgr->KeyPressed(SDL_SCANCODE_LCTRL))
+			arc.InjectCtrKeyDown();
+		else arc.InjectCtrKeyUp();
+
+		if (mgr->MouseButtonDown(B_RIGHT))
+			arc.InjectRightMouseButtonDown();
+		else arc.InjectRightMouseButtonUp();
+
+		arc.InjectMouseMove(mgr->MouseMove());
+		arc.InjectMousePos(mgr->GetMouseX(), mgr->GetMouseY());
+
+		arc.Update();
+#endif
 		scene->DrawAll();
 
 		time  = GetTickCount();
