@@ -104,8 +104,11 @@ void Window::HandleEvents()
 			break;
 		}
 
+		
 		inputManager->Update(ev);
+
 	}
+
 }
 
 bool Window::IsOpen()

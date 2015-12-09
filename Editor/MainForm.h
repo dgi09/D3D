@@ -3,6 +3,8 @@
 #include "DrawPanel.h"
 #include "FPSCameraController.h"
 #include "FPSCameraUpdateable.h"
+#include "ArcBallCameraController.h"
+#include "ArcBallCameraUpdateable.h"
 
 class MainForm
 {
@@ -10,8 +12,8 @@ class MainForm
 	DrawPanel * drawPanel;
 	Scene * scene;
 
-	FPSCameraController cameraController;
-	FPSCameraUpdateable * updateableComponent;
+	ArcBallCameraController cameraController;
+	ArcBallCameraUpdateable * updateableComponent;
 public:
 
 	MainForm();

@@ -41,6 +41,7 @@ void Camera::SetUpData()
 		requireViewMatrixRecalculation = false;
 
 		isPositionChanged = false;
+		isChanged = true;
 		
 	}
 
@@ -48,6 +49,7 @@ void Camera::SetUpData()
 	{
 		XMStoreFloat4x4(&shaderData.projection,XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(fov),aspectRatio,nearDistance,farDistance));
 		requirePorjMatrixRecalculation = false;
+		isChanged = true;
 	}
 
 }

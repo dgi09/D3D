@@ -20,6 +20,8 @@ DrawPanel::DrawPanel(wxWindow * parent,wxPoint pos,wxSize size,int flags,wchar_t
 	wxControl->Bind(wxEVT_KEY_UP, &DrawPanel::KeyUp, this);
 	wxControl->Bind(wxEVT_MOTION, &DrawPanel::MouseMotion, this);
 
+	wxControl->Bind(wxEVT_MOUSEWHEEL, &DrawPanel::MouseWheel, this);
+
 	window = Window::Create(size.GetWidth(),size.GetHeight(),(HWND)wxControl->GetHandle());
 	scene = window->GetScene();
 }
@@ -111,6 +113,14 @@ void DrawPanel::LeftMouseButtonUp(wxMouseEvent & e)
 	}
 }
 
+void DrawPanel::MouseWheel(wxMouseEvent & e)
+{
+	MouseEvent ev;
+	ev.type = MET_WHEEL;
+	ev.vertScroll = e.m_wheelRotation / e.m_wheelDelta;
+
+	mouseEventHandler(ev);
+}
 void DrawPanel::RightMouseButtonDown(wxMouseEvent & e)
 {
 	MouseEvent ev;

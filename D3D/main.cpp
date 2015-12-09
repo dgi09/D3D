@@ -20,6 +20,7 @@
 #include "Model_Creator.h"
 #include "Billboard_Test.h"
 #include "Object_Picking_Test.h"
+#include <stdio.h>
 
 #undef main
 
@@ -28,7 +29,7 @@
 #define FPS_CONTROLLER 0
 #define ARC_BALL_CONTROLLER 1
 
-#define CAM_CONTROLLER FPS_CONTROLLER
+#define CAM_CONTROLLER ARC_BALL_CONTROLLER
 
 //int WINAPI WinMain( _In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd )
 int main(int argc, char** argv)
@@ -81,6 +82,9 @@ int main(int argc, char** argv)
 #else 
 	ArcBallCameraController arc;
 	arc.SetCamera(camPtr);
+	arc.SetZoomAmount(10.0f);
+	arc.SetMoveAmount(5.0f);
+	arc.SetRotateAmount(3.0f);
 #endif
 
 
@@ -125,21 +129,34 @@ int main(int argc, char** argv)
 
 #else 
 		if (mgr->KeyPressed(SDL_SCANCODE_LCTRL))
+		{
 			arc.InjectCtrKeyDown();
+		}
 		else arc.InjectCtrKeyUp();
 
 		if (mgr->MouseButtonDown(B_RIGHT))
 			arc.InjectRightMouseButtonDown();
 		else arc.InjectRightMouseButtonUp();
 
+		if (mgr->Scroll())
+		{
+			arc.InjectScroll(true);
+			arc.InjectVerticalScroll(mgr->GetVerticalScroll());
+
+			printf("Scroll %i \n", mgr->GetVerticalScroll());
+		}
+		else
+			arc.InjectScroll(false);
+
 		arc.InjectMouseMove(mgr->MouseMove());
 		arc.InjectMousePos(mgr->GetMouseX(), mgr->GetMouseY());
 
 		arc.Update();
 #endif
+
 		scene->DrawAll();
 
-		time  = GetTickCount();
+		time = GetTickCount();
 	}
 
 #else 

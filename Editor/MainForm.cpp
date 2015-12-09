@@ -12,7 +12,9 @@
 
 MainForm::MainForm()
 {
-	updateableComponent = new FPSCameraUpdateable(&cameraController);
+	updateableComponent = new ArcBallCameraUpdateable();
+	updateableComponent->SetController(&cameraController);
+
 	EditorUpdateableManager::GetPtr()->AddElement(updateableComponent);
 	ActiveTool::Set(new SelectTool());
 
@@ -110,7 +112,10 @@ void MainForm::InitScene()
 
 
 	cameraController.SetCamera(camPtr);
-	cameraController.SetMovementSpeed(2.0f);
+	cameraController.SetMoveAmount(2.0f);
+	cameraController.SetZoomAmount(10.0f);
+	cameraController.SetRotateAmount(3.0f);
+
 }
 
 void MainForm::DrawPanel_MouseEvent(MouseEvent & evt)
@@ -119,7 +124,7 @@ void MainForm::DrawPanel_MouseEvent(MouseEvent & evt)
 	{
 		if (evt.button == ME_MB_RIGHT)
 		{
-			cameraController.InjectMouseDown(FPSBind_Mouse_Right);
+			cameraController.InjectRightMouseButtonDown();
 		}
 	}
 
@@ -127,15 +132,19 @@ void MainForm::DrawPanel_MouseEvent(MouseEvent & evt)
 	{
 		if (evt.button == ME_MB_RIGHT)
 		{
-			cameraController.InjectMouseUp(FPSBind_Mouse_Right);
+			cameraController.InjectRightMouseButtonUp();
 		}
 	}
 
-	if (evt.type == MET_MOTION)
+	if (evt.type == MET_WHEEL)
 	{
-		cameraController.InjectMouseMove(true);
+		cameraController.InjectScroll(true);
+		cameraController.InjectVerticalScroll(evt.vertScroll);
+
 	}
-	else cameraController.InjectMouseMove(false);
+
+
+	cameraController.InjectMouseMove(evt.type == MET_MOTION);
 
 	cameraController.InjectMousePos(evt.x, evt.y);
 
@@ -148,34 +157,18 @@ void MainForm::DrawPanel_KeyboardEvent(KeyboardEvent & evt)
 {
 	if (evt.type == KET_KEYDOWN)
 	{
-		if (evt.keyCode == WXK_LEFT)
-			cameraController.InjectKeyDown(FPSBind_Key_Left);
-		else 
-		if (evt.keyCode == WXK_RIGHT)
-			cameraController.InjectKeyDown(FPSBind_Key_Right);
-		else 
-		if (evt.keyCode == WXK_UP)
-			cameraController.InjectKeyDown(FPSBind_Key_Up);
-		else
-		if (evt.keyCode == WXK_DOWN)
-			cameraController.InjectKeyDown(FPSBind_Key_Down);
+		if (evt.keyCode == WXK_CONTROL)
+			cameraController.InjectCtrKeyDown();
+	
 	}
 
 	if (evt.type == KET_KEYUP)
 	{
-		if (evt.keyCode == WXK_LEFT)
-			cameraController.InjectKeyUp(FPSBind_Key_Left);
-		else
-			if (evt.keyCode == WXK_RIGHT)
-				cameraController.InjectKeyUp(FPSBind_Key_Right);
-			else
-				if (evt.keyCode == WXK_UP)
-					cameraController.InjectKeyUp(FPSBind_Key_Up);
-				else
-					if (evt.keyCode == WXK_DOWN)
-						cameraController.InjectKeyUp(FPSBind_Key_Down);
-
 		if (evt.keyCode == WXK_CONTROL)
+			cameraController.InjectCtrKeyUp();
+	
+
+		if (evt.keyCode == 'W')
 		{
 			ActiveTool::Set(new MoveTool());
 		}

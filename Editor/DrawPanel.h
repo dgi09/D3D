@@ -43,6 +43,8 @@ protected:
 	
 	void MouseMotion(wxMouseEvent & e);
 
+	void MouseWheel(wxMouseEvent & e);
+
 	// keyboard events
 	void KeyDown(wxKeyEvent & e);
 	void KeyUp(wxKeyEvent & e);

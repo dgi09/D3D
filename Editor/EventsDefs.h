@@ -13,7 +13,8 @@ enum ME_Type
 	MET_BUTTONDOWN,
 	MET_BUTTONUP,
 	MET_CLICK,
-	MET_MOTION
+	MET_MOTION,
+	MET_WHEEL
 };
 
 struct MouseEvent
@@ -22,6 +23,7 @@ struct MouseEvent
 	ME_Type type;
 
 	unsigned int x, y;
+	int vertScroll;
 };
 
 enum KE_Type

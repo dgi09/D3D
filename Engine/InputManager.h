@@ -16,7 +16,9 @@ class EXPORT InputManager
 	SDL_Event currentEvent;
 
 	int mouseX, mouseY;
+	int verticalScroll;
 	bool mouseMove;
+	bool scroll;
 	bool keys[282];
 
 	unsigned int widht, height;
@@ -37,7 +39,8 @@ public:
 	bool MouseButtonDown(MouseButton button);
 	bool MouseButtonClick(MouseButton button);
 	bool MouseMove();
-
+	bool Scroll();
+	int GetVerticalScroll();
 	int GetMouseX();
 	int GetMouseY();
 };

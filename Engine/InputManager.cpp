@@ -7,6 +7,7 @@ InputManager::InputManager()
 	mouseMove = false;
 	mouseX = 0;
 	mouseY = 0;
+	verticalScroll = 0;
 }
 
 InputManager::~InputManager()
@@ -37,6 +38,9 @@ void InputManager::PreUpdate()
 	{
 		lastStateDown[i] = currentStateDown[i];
 	}
+
+	mouseMove = false;
+	scroll = false;
 }
 
 
@@ -75,8 +79,13 @@ void InputManager::Update(SDL_Event evt)
 	{
 		mouseMove = true;
 	}
-	else
-		mouseMove = false;
+
+	if (evt.type == SDL_MOUSEWHEEL)
+	{
+		verticalScroll = evt.wheel.y;
+		scroll = true;
+	}
+
 }
 
 bool InputManager::KeyPressed(unsigned int key)
@@ -112,4 +121,13 @@ bool InputManager::MouseButtonDown(MouseButton button)
 bool InputManager::MouseButtonClick(MouseButton button)
 {
 	return !currentStateDown[(int)button] && lastStateDown[button];
+}
+
+bool InputManager::Scroll()
+{
+	return scroll;
+}
+int InputManager::GetVerticalScroll()
+{
+	return verticalScroll;
 }
