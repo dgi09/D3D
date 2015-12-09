@@ -44,7 +44,7 @@ class WX_MainForm : public wxFrame
 	
 	public:
 		
-		WX_MainForm( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("3dSandbox"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 1070,600 ), long style = wxDEFAULT_FRAME_STYLE );
+		WX_MainForm( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("3dSandbox"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 1070,600 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 		
 		~WX_MainForm();
 	

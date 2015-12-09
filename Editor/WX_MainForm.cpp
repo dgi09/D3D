@@ -16,7 +16,7 @@ WX_MainForm::WX_MainForm( wxWindow* parent, wxWindowID id, const wxString& title
 	wxBoxSizer* bsMain;
 	bsMain = new wxBoxSizer( wxHORIZONTAL );
 	
-	pDrawPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( 900,600 ), 0, wxT("pnlDraw") );
+	pDrawPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxSize( 900,600 ), wxTAB_TRAVERSAL, wxT("pnlDraw") );
 	wxBoxSizer* bsDrawPanel;
 	bsDrawPanel = new wxBoxSizer( wxVERTICAL );
 	
@@ -43,6 +43,13 @@ WX_MainForm::WX_MainForm( wxWindow* parent, wxWindowID id, const wxString& title
 	bMain->Fit( pnlCreateBar );
 	nbMain->AddPage( pnlCreateBar, wxT("Create Object"), true );
 	pnlPropBar = new wxPanel( nbMain, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer* pnlPropSizer;
+	pnlPropSizer = new wxBoxSizer( wxVERTICAL );
+	
+	
+	pnlPropBar->SetSizer( pnlPropSizer );
+	pnlPropBar->Layout();
+	pnlPropSizer->Fit( pnlPropBar );
 	nbMain->AddPage( pnlPropBar, wxT("Properties"), false );
 	
 	bsMain->Add( nbMain, 1, wxEXPAND, 1 );
