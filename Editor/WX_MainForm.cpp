@@ -42,7 +42,7 @@ WX_MainForm::WX_MainForm( wxWindow* parent, wxWindowID id, const wxString& title
 	pnlCreateBar->Layout();
 	bMain->Fit( pnlCreateBar );
 	nbMain->AddPage( pnlCreateBar, wxT("Create Object"), true );
-	pnlPropBar = new wxPanel( nbMain, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	pnlPropBar = new wxPanel( nbMain, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL, wxT("pnlPropBar") );
 	wxBoxSizer* pnlPropSizer;
 	pnlPropSizer = new wxBoxSizer( wxVERTICAL );
 	

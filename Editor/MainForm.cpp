@@ -9,6 +9,8 @@
 #include "ActiveTool.h"
 #include "SelectTool.h"
 #include "MoveTool.h"
+#include "WX_TransformSection.h"
+
 
 MainForm::MainForm()
 {
@@ -33,6 +35,13 @@ void MainForm::Init()
 
 	pnlSizer->Add(drawPanel->GetWxControl());
 
+	wxPanel * propPanel = (wxPanel*)wxForm->FindWindowByName(wxString("pnlPropBar"));
+	wxSizer * propSizer = propPanel->GetSizer();
+
+	WX_TransformSection * ts = new WX_TransformSection(propPanel);
+	
+	
+	propSizer->Add(ts);
 	InitScene();
 
 	wxButton * btnAddStaticEntity = (wxButton*)wxForm->FindWindowByName(wxString("btnCreateStaticEntity"));
