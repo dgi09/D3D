@@ -3,7 +3,9 @@
 #include <DirectXMath.h>
 #include "SelectableObjectsManager.h"
 #include "ActiveMoveable.h"
-
+#include "ProperySectionsManager.h"
+#include "PropertiesPanel.h"
+#include "Utils.h"
 
 using namespace DirectX;
 
@@ -63,6 +65,32 @@ void EditorEntity::OnSelect()
 {
 	bboxEntity.Get()->SetVisible(true);
 	ActiveMoveable::Set(this);
+
+	EntityBase * base = entityBase->GetBase();
+
+	transformSection = PropertySectionsManager::GetTransformSection();
+	transformSection->SetPosition(base->GetPosition());
+	transformSection->SetRotation(base->GetRotation());
+	transformSection->SetScale(base->GetScale());
+
+	transformSection->SetOnChangeCallback(std::bind(&EditorEntity::OnTransformSectionChange, this, std::placeholders::_1));
+
+	materialSection = PropertySectionsManager::GetMaterialSection();
+	materialSection->SetNumberOfSubsets(base->GetNumberOfMaterials());
+
+	Material * mat = base->GetMaterial(0);
+
+	materialSection->SetDiffuseColor(mat->GetDiffuseColor());
+	materialSection->SetEmmisive(mat->GetEmmisivePower());
+	materialSection->SetIlluminate(base->IsIlluminated());
+	materialSection->SetSpecular(mat->GetSpecularPower());
+	materialSection->SetSpecularIntesity(mat->GetSpecularIntensity());
+
+	materialSection->SetOnChangeCallback(std::bind(&EditorEntity::OnMaterialSectionChange, this, std::placeholders::_1));
+
+	PropertiesPanel::Clear();
+	PropertiesPanel::Add(transformSection->GetWXControl());
+	PropertiesPanel::Add(materialSection->GetWXControl());
 }
 
 void EditorEntity::OnFocusOut()
@@ -71,70 +99,7 @@ void EditorEntity::OnFocusOut()
 }
 void EditorEntity::CreateBBox()
 {
-	AABB bbox = entityBase->GetBase()->GetAABB();
-
-	Vector3 min = bbox.min;
-	Vector3 max = bbox.max;
-
-	StaticVert box[32];
-	box[0].pos = Vector3(min.x, max.y, min.z);
-	box[1].pos = Vector3(max.x, max.y, min.z);
-
-	box[2].pos = Vector3(max.x, max.y, min.z);
-	box[3].pos = Vector3(max.x, min.y, min.z);
-
-	box[4].pos = Vector3(max.x, min.y, min.z);
-	box[5].pos = Vector3(min.x, min.y, min.z);
-
-	box[6].pos = Vector3(min.x, min.y, min.z);
-	box[7].pos = Vector3(min.x, max.y, min.z);
-
-	box[8].pos = Vector3(min.x, max.y, max.z);
-	box[9].pos = Vector3(max.x, max.y, max.z);
-
-	box[10].pos = Vector3(max.x, max.y, max.z);
-	box[11].pos = Vector3(max.x, min.y, max.z);
-
-	box[12].pos = Vector3(max.x, min.y, max.z);
-	box[13].pos = Vector3(min.x, min.y, max.z);
-
-	box[14].pos = Vector3(min.x, min.y, max.z);
-	box[15].pos = Vector3(min.x, max.y, max.z);
-
-	box[16].pos = Vector3(max.x, max.y, min.z);
-	box[17].pos = Vector3(max.x, max.y, max.z);
-
-	box[18].pos = Vector3(max.x, max.y, max.z);
-	box[19].pos = Vector3(max.x, min.y, max.z);
-
-	box[20].pos = Vector3(max.x, min.y, max.z);
-	box[21].pos = Vector3(max.x, min.y, min.z);
-
-	box[22].pos = Vector3(max.x, min.y, min.z);
-	box[23].pos = Vector3(max.x, max.y, min.z);
-
-	box[24].pos = Vector3(min.x, max.y, min.z);
-	box[25].pos = Vector3(min.x, max.y, max.z);
-
-	box[26].pos = Vector3(min.x, max.y, max.z);
-	box[27].pos = Vector3(min.x, min.y, max.z);
-
-	box[28].pos = Vector3(min.x, min.y, max.z);
-	box[29].pos = Vector3(min.x, min.y, min.z);
-
-	box[30].pos = Vector3(min.x, min.y, min.z);
-	box[31].pos = Vector3(min.x, max.y, min.z);
-
-
-
-	ModelCreator<StaticVert> cr;
-	cr.StartMesh();
-	cr.SetTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
-	cr.SetDrawMethod(DM_DRAW);
-	cr.SetVertexBuffer(box, sizeof(box), sizeof(StaticVert));
-	cr.EndMesh();
-
-	bboxEntity = MainScene::Get()->AddStaticEntity(cr, "box"); // to do add number postfix
+	bboxEntity = Utils::CreateBBoxEntity(entityBase->GetBase());
 
 	StaticEntity * ent = bboxEntity.Get();
 	ent->CalculateTransform(false);
@@ -148,5 +113,83 @@ void EditorEntity::Move(Vector3 offset)
 {
 	entityBase->GetBase()->Move(offset.x, offset.y, offset.z);
 
+	UpdateBBoxTransform();
+}
+
+void EditorEntity::OnTransformSectionChange(TransformSectionChange ch)
+{
+	switch (ch)
+	{
+	case TSC_POSITION:
+		entityBase->GetBase()->SetPosition(transformSection->GetPosition());
+		break;
+	case TSC_ROTATION:
+		entityBase->GetBase()->SetRotation(transformSection->GetRotation());
+		break;
+	case TSC_SCALE:
+		entityBase->GetBase()->SetScale(transformSection->GetScale());
+	}
+
+	UpdateBBoxTransform();
+}
+
+void EditorEntity::OnMaterialSectionChange(MaterialSectionChange ch)
+{
+	switch (ch)
+	{
+	case MSC_SUBSET:
+		FillCurrentSubset();
+		break;
+	case MSC_DIFFUSE_COLOR:
+		GetCurrentMat()->SetDiffuseColor(materialSection->GetDiffuseColor());
+		break;
+	case MSC_USEDIFFUSE_TEXTURE:
+	{
+		GetCurrentMat()->UseDiffuseMap(materialSection->GetUseDiffuse());
+		std::string map = materialSection->GetDiffuseTexture();
+		if (!map.empty())
+			GetCurrentMat()->SetDiffuseMap(map.c_str());
+	}
+		break;
+	case MSC_DIFFUSE_TEXTURE:
+		GetCurrentMat()->SetDiffuseMap(materialSection->GetDiffuseTexture().c_str());
+		break;
+	case MSC_ILLUMINATE:
+		entityBase->GetBase()->Illuminate(materialSection->GetIlluminate());
+		break;
+	case MSC_EMMISIVE:
+		GetCurrentMat()->SetEmmisivePower(materialSection->GetEmmisive());
+		break;
+	case MSC_SPECULAR:
+		GetCurrentMat()->SetSpecularPower(materialSection->GetSpecular());
+		break;
+	case MSC_SPECULAR_INTESITY:
+		GetCurrentMat()->SetSpecularIntesity(materialSection->GetSpecularIntesity());
+		break;
+	}
+}
+
+void EditorEntity::UpdateBBoxTransform()
+{
 	bboxEntity.Get()->SetTransform(entityBase->GetBase()->GetWorldMatrix());
+}
+
+void EditorEntity::FillCurrentSubset()
+{
+	int subset = materialSection->GetCurrentSubset();
+
+	EntityBase * base = entityBase->GetBase();
+	Material * mat = base->GetMaterial(subset);
+
+	materialSection->SetDiffuseColor(mat->GetDiffuseColor());
+	materialSection->SetEmmisive(mat->GetEmmisivePower());
+	materialSection->SetIlluminate(base->IsIlluminated());
+	materialSection->SetSpecular(mat->GetSpecularPower());
+	materialSection->SetSpecularIntesity(mat->GetSpecularIntensity());
+
+}
+
+Material * EditorEntity::GetCurrentMat()
+{
+	return entityBase->GetBase()->GetMaterial(materialSection->GetCurrentSubset());
 }

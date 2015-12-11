@@ -4,12 +4,15 @@
 #include "IEditorSceneObject.h"
 #include "Scene.h"
 #include "IMoveable.h"
-
+#include "TransformSection.h"
+#include "MaterialSection.h"
 class EditorEntity : public IEditorSceneObject , public ISelectable , public IMoveable
 {
 	IEntity * entityBase;
 	StaticEntityPtr bboxEntity;
 
+	TransformSection * transformSection;
+	MaterialSection * materialSection;
 public:
 	EditorEntity(IEntity * base);
 
@@ -25,4 +28,10 @@ public:
 protected:
 	
 	void CreateBBox();
+	void UpdateBBoxTransform();
+	void OnTransformSectionChange(TransformSectionChange ch);
+	void OnMaterialSectionChange(MaterialSectionChange ch);
+
+	void FillCurrentSubset();
+	Material * GetCurrentMat();
 };

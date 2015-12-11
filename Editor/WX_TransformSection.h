@@ -34,21 +34,21 @@ class WX_TransformSection : public wxPanel
 	private:
 	
 	protected:
+		wxPGProperty* propCategoryRot;
+		wxPGProperty* propCategoryScale;
+	
+	public:
 		wxPropertyGrid* propGrid;
 		wxPGProperty* propCategoryPos;
-		wxPGProperty* itemPosX;
+		wxPGProperty* posX;
 		wxPGProperty* posY;
 		wxPGProperty* posZ;
-		wxPGProperty* propCategoryRot;
 		wxPGProperty* roll;
 		wxPGProperty* yaw;
 		wxPGProperty* pitch;
-		wxPGProperty* propCategoryScale;
 		wxPGProperty* scaleX;
 		wxPGProperty* scaleY;
 		wxPGProperty* scaleZ;
-	
-	public:
 		
 		WX_TransformSection( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 153,256 ), long style = wxTAB_TRAVERSAL ); 
 		~WX_TransformSection();

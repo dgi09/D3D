@@ -50,7 +50,7 @@ public:
 
 
 	void Illuminate(bool val);
-
+	bool IsIlluminated();
 	virtual void Destroy();
 	void Init(ModelHandler model,ResourceManager * resMgr, DeviceDependableFactory * factory);
 

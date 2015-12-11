@@ -16,7 +16,7 @@ WX_TransformSection::WX_TransformSection( wxWindow* parent, wxWindowID id, const
 	
 	propGrid = new wxPropertyGrid(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxPG_SPLITTER_AUTO_CENTER);
 	propCategoryPos = propGrid->Append( new wxPropertyCategory( wxT("Position"), wxT("Position") ) ); 
-	itemPosX = propGrid->Append( new wxFloatProperty( wxT("X"), wxT("X") ) ); 
+	posX = propGrid->Append( new wxFloatProperty( wxT("X"), wxT("X") ) ); 
 	posY = propGrid->Append( new wxFloatProperty( wxT("Y"), wxT("Y") ) ); 
 	posZ = propGrid->Append( new wxFloatProperty( wxT("Z"), wxT("Z") ) ); 
 	propCategoryRot = propGrid->Append( new wxPropertyCategory( wxT("Rotation"), wxT("Rotation") ) ); 

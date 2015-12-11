@@ -2,7 +2,7 @@
 #include "Common.h"
 #include "PLData.h"
 #include <DirectXMath.h>
-
+#include "Color.h"
 
 class EXPORT Scene;
 
@@ -10,15 +10,20 @@ class EXPORT PointLight
 {
 	PLData * data;
 	bool isChanged;
+	float range;
 public:
 	void SetPosition(float x,float y,float z);
 	void SetPosition(Vector3 position);
 
+	Vector3 GetPosition();
+
 	void SetDiffuse(Vector4 diffuse);
 	void SetDiffuse(float r,float g,float b,float a);
+	Color GetDiffuse();
+
 
 	void SetRange(float val);
-
+	float GetRange();
 private:
 	friend class EXPORT Scene;
 	void Init();

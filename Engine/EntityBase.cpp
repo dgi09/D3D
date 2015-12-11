@@ -253,3 +253,8 @@ void EntityBase::SetTransform(DirectX::XMFLOAT4X4 transform)
 	data.worldMatrix = transform;
 	shaderData.FillWorldMatrixBuffer(data.worldMatrix);
 }
+
+bool EntityBase::IsIlluminated()
+{
+	return EffectMaskUtil::IsBinded(effectMask, ILLUMINATION);
+}

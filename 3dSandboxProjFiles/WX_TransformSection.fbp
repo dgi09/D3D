@@ -129,7 +129,7 @@
                         <property name="pane_border">1</property>
                         <property name="pane_position"></property>
                         <property name="pane_size"></property>
-                        <property name="permission">protected</property>
+                        <property name="permission">public</property>
                         <property name="pin_button">1</property>
                         <property name="pos"></property>
                         <property name="resize">Resizable</property>
@@ -140,7 +140,7 @@
                         <property name="toolbar_pane">0</property>
                         <property name="tooltip"></property>
                         <property name="window_extra_style"></property>
-                        <property name="window_name"></property>
+                        <property name="window_name">propGrid</property>
                         <property name="window_style"></property>
                         <event name="OnChar"></event>
                         <event name="OnEnterWindow"></event>
@@ -171,28 +171,28 @@
                             <property name="help"></property>
                             <property name="label">Position</property>
                             <property name="name">propCategoryPos</property>
-                            <property name="permission">protected</property>
+                            <property name="permission">public</property>
                             <property name="type">Category</property>
                         </object>
                         <object class="propGridItem" expanded="1">
                             <property name="help"></property>
                             <property name="label">X</property>
-                            <property name="name">itemPosX</property>
-                            <property name="permission">protected</property>
+                            <property name="name">posX</property>
+                            <property name="permission">public</property>
                             <property name="type">Float</property>
                         </object>
                         <object class="propGridItem" expanded="1">
                             <property name="help"></property>
                             <property name="label">Y</property>
                             <property name="name">posY</property>
-                            <property name="permission">protected</property>
+                            <property name="permission">public</property>
                             <property name="type">Float</property>
                         </object>
                         <object class="propGridItem" expanded="1">
                             <property name="help"></property>
                             <property name="label">Z</property>
                             <property name="name">posZ</property>
-                            <property name="permission">protected</property>
+                            <property name="permission">public</property>
                             <property name="type">Float</property>
                         </object>
                         <object class="propGridItem" expanded="1">
@@ -206,21 +206,21 @@
                             <property name="help"></property>
                             <property name="label">Roll</property>
                             <property name="name">roll</property>
-                            <property name="permission">protected</property>
+                            <property name="permission">public</property>
                             <property name="type">Float</property>
                         </object>
                         <object class="propGridItem" expanded="1">
                             <property name="help"></property>
                             <property name="label">Yaw</property>
                             <property name="name">yaw</property>
-                            <property name="permission">protected</property>
+                            <property name="permission">public</property>
                             <property name="type">Float</property>
                         </object>
                         <object class="propGridItem" expanded="1">
                             <property name="help"></property>
                             <property name="label">Pitch</property>
                             <property name="name">pitch</property>
-                            <property name="permission">protected</property>
+                            <property name="permission">public</property>
                             <property name="type">Float</property>
                         </object>
                         <object class="propGridItem" expanded="1">
@@ -234,21 +234,21 @@
                             <property name="help"></property>
                             <property name="label">ScaleX</property>
                             <property name="name">scaleX</property>
-                            <property name="permission">protected</property>
+                            <property name="permission">public</property>
                             <property name="type">Float</property>
                         </object>
                         <object class="propGridItem" expanded="1">
                             <property name="help"></property>
                             <property name="label">ScaleY</property>
                             <property name="name">scaleY</property>
-                            <property name="permission">protected</property>
+                            <property name="permission">public</property>
                             <property name="type">Float</property>
                         </object>
                         <object class="propGridItem" expanded="1">
                             <property name="help"></property>
                             <property name="label">ScaleZ</property>
                             <property name="name">scaleZ</property>
-                            <property name="permission">protected</property>
+                            <property name="permission">public</property>
                             <property name="type">Float</property>
                         </object>
                     </object>

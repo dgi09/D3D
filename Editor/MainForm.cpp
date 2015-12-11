@@ -9,8 +9,9 @@
 #include "ActiveTool.h"
 #include "SelectTool.h"
 #include "MoveTool.h"
-#include "WX_TransformSection.h"
-
+#include "PropertiesPanel.h"
+#include "ProperySectionsManager.h"
+#include "EditorPointLight.h"
 
 MainForm::MainForm()
 {
@@ -27,26 +28,27 @@ MainForm::MainForm()
 void MainForm::Init()
 {
 	wxPanel * wxDrawPanelHolder = (wxPanel*)wxForm->FindWindowByName(wxString("pnlDraw"));
-	wxSizer * pnlSizer = wxDrawPanelHolder->GetSizer();
+	//wxSizer * pnlSizer = wxDrawPanelHolder->GetSizer();
 
 	drawPanel = new DrawPanel(wxDrawPanelHolder,wxDefaultPosition,wxDrawPanelHolder->GetSize(),wxDEFAULT_FRAME_STYLE,wxT("drawPnl111"));
 	drawPanel->OnMouseEvent(std::bind(&MainForm::DrawPanel_MouseEvent, this, std::placeholders::_1));
 	drawPanel->OnKeyboardEvent(std::bind(&MainForm::DrawPanel_KeyboardEvent, this, std::placeholders::_1));
 
-	pnlSizer->Add(drawPanel->GetWxControl());
+	//pnlSizer->Add(drawPanel->GetWxControl());
 
 	wxPanel * propPanel = (wxPanel*)wxForm->FindWindowByName(wxString("pnlPropBar"));
 	wxSizer * propSizer = propPanel->GetSizer();
 
-	WX_TransformSection * ts = new WX_TransformSection(propPanel);
-	
-	
-	propSizer->Add(ts);
+	PropertiesPanel::SetSizer(propSizer);
+	PropertySectionsManager::SetParent(propPanel);
+
 	InitScene();
 
 	wxButton * btnAddStaticEntity = (wxButton*)wxForm->FindWindowByName(wxString("btnCreateStaticEntity"));
 	btnAddStaticEntity->Bind(wxEVT_LEFT_DOWN,&MainForm::OnAddStaticEntity_Click,this);
 
+	wxButton * btnAddLight = (wxButton*)wxForm->FindWindowByName(wxString("btnCreateLight"));
+	btnAddLight->Bind(wxEVT_LEFT_DOWN, &MainForm::OnAddLight_Click, this);
 }
 
 void MainForm::Show()
@@ -74,11 +76,11 @@ void MainForm::OnAddStaticEntity_Click(wxMouseEvent &evt)
 		{
 			Material * mat = en->GetMaterial(i);
 			mat->UseDiffuseMap(false);
-			mat->SetDiffuseColor(Color::Red());
+			mat->SetDiffuseColor(Color::White());
 
-			mat->SetEmmisivePower(6);
-			mat->SetSpecularPower(240);
-			mat->SetSpecularIntesity(5);
+			mat->SetEmmisivePower(1);
+			mat->SetSpecularPower(1);
+			mat->SetSpecularIntesity(1);
 		}
 		
 
@@ -91,7 +93,19 @@ void MainForm::OnAddStaticEntity_Click(wxMouseEvent &evt)
 
 }
 
+void MainForm::OnAddLight_Click(wxMouseEvent & evt)
+{
+	PointLightPtr ptr = scene->AddPointLight();
+	PointLight * p = ptr.Get();
+	p->SetPosition(0.0f, 0.0f, 0.0f);
+	p->SetDiffuse(1.0f,1.0f,1.0f,1.0f);
+	p->SetRange(100.0f);
 
+	EditorPointLight * pl = new EditorPointLight(ptr);
+	EditorSceneObjectsManager::GetPtr()->AddElement(pl);
+
+	ActiveTool::Set(new SelectTool());
+}
 
 void MainForm::InitScene()
 {

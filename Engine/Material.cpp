@@ -16,6 +16,11 @@ void Material::UseDiffuseMap(bool val)
 	}
 }
 
+bool Material::IsUsingDiffuseMap()
+{
+	return (data.optionsMask & 1) == 1;
+}
+
 void Material::SetDiffuseMap(const char * fileName)
 {
 	diffuseMap = resMgr->GetTexture(fileName);
@@ -29,6 +34,11 @@ void Material::UseBumpMap(bool val)
 		data.optionsMask |= (1 << 1);
 }
 
+bool Material::IsUsingBumpMap()
+{
+	return false;
+}
+
 void Material::SetBumpMap(const char * fileName)
 {
 	bumpMap = resMgr->GetTexture(fileName);
@@ -39,20 +49,45 @@ void Material::SetDiffuseColor(Color color)
 	data.diffuseColor = color;
 }
 
+Color Material::GetDiffuseColor()
+{
+	return data.diffuseColor;
+}
+
+
 void Material::SetSpecularIntesity(unsigned short val)
 {
 	data.specularIntesity = (unsigned char)val;
 }
+
+
+unsigned short Material::GetSpecularIntensity()
+{
+	return data.specularIntesity;
+
+}
+
 
 void Material::SetSpecularPower(unsigned short val)
 {
 	data.specularPower = (unsigned char)val;
 }
 
+unsigned short Material::GetSpecularPower()
+{
+	return data.specularPower;
+}
+
 void Material::SetEmmisivePower(unsigned short val)
 {
 	data.emmisivePowerNorm = (unsigned char)val;
 }
+
+unsigned short Material::GetEmmisivePower()
+{
+	return data.emmisivePowerNorm;
+}
+
 
 void Material::Init(ResourceManager * mgr)
 {
@@ -89,3 +124,4 @@ TexturePtr Material::GetBumpTexture()
 {
 	return bumpMap.Get();
 }
+

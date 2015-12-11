@@ -30,15 +30,27 @@ class EXPORT Material
 public:
 
 	void UseDiffuseMap(bool val);
+	bool IsUsingDiffuseMap();
+
 	void SetDiffuseMap(const char * fileName);
 	
 	void UseBumpMap(bool val);
+	bool IsUsingBumpMap();
+
 	void SetBumpMap(const char * fileName);
 
 	void SetDiffuseColor(Color color);
+	Color GetDiffuseColor();
+
 	void SetSpecularIntesity(unsigned short val);
+	unsigned short GetSpecularIntensity();
+
 	void SetSpecularPower(unsigned short val);
+	unsigned short GetSpecularPower();
+
 	void SetEmmisivePower(unsigned short val);
+	unsigned short GetEmmisivePower();
+
 private:
 	friend class EntityBase;
 

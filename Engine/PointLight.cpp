@@ -20,6 +20,11 @@ void PointLight::SetPosition(Vector3 position)
 
 }
 
+Vector3 PointLight::GetPosition()
+{
+	return data->position;
+}
+
 void PointLight::SetDiffuse(Vector4 diffuse)
 {
 	if(data->diffuse != diffuse)
@@ -41,6 +46,16 @@ void PointLight::SetDiffuse(float r,float g,float b,float a)
 	SetDiffuse(d);
 }
 
+Color PointLight::GetDiffuse()
+{
+	Vector4 d = data->diffuse;
+	Color c;
+	c.r = d.x;
+	c.g = d.y;
+	c.b = d.z;
+	c.a = d.w;
+	return c;
+}
 
 void PointLight::SetRange(float val)
 {
@@ -48,12 +63,18 @@ void PointLight::SetRange(float val)
 	{
 		if(data->range != 1/val)
 		{
+			range = val;
 			data->range = 1/val;
 			isChanged = true;
 		}
 
 	}
 
+}
+
+float PointLight::GetRange()
+{
+	return range;
 }
 
 void PointLight::Init()
