@@ -70,3 +70,25 @@ StaticEntityPtr Utils::CreateBBoxEntity(EntityBase * entity)
 	return MainScene::Get()->AddStaticEntity(cr, std::string("box") + std::to_string(current++));
 	
 }
+
+Color Utils::WxColourToColor(wxColour val)
+{
+	Color c;
+	c.r = (float)val.Red() / 255.0f;
+	c.g = (float)val.Green() / 255.0f;
+	c.b = (float)val.Blue() / 255.0f;
+
+	return c;
+}
+wxColour Utils::ColorToWxColour(Color val)
+{
+	wxColor col;
+
+	unsigned int r = (int)(255.0f * val.r);
+	unsigned int g = (int)(255.0f * val.g);
+	unsigned int b = (int)(255.0f * val.b);
+
+	col.Set(r, g, b);
+
+	return col;
+}

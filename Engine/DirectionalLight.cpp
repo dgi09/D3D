@@ -51,6 +51,17 @@ void DirectionalLight::SetDiffuseColor(Vector4 color)
 	
 }
 
+void DirectionalLight::SetDiffuseColor(Color color)
+{
+	Vector4 diff;
+	diff.x = color.r;
+	diff.y = color.g;
+	diff.z = color.b;
+	diff.w = color.a;
+
+	SetDiffuseColor(diff);
+}
+
 bool DirectionalLight::IsChanged()
 {
 	return isChanged;
@@ -91,4 +102,24 @@ void DirectionalLight::InitShadowMap(DeviceDependableFactory * factory)
 TexturePtr DirectionalLight::GetShadowMap()
 {
 	return shadowMapPtr;
+}
+
+Vector3 DirectionalLight::GetDirection()
+{
+	return data->direction;
+}
+Vector4 DirectionalLight::GetDiffuseAsVector()
+{
+	return data->diffuseColor;
+}
+
+Color DirectionalLight::GetDiffuseAsColor()
+{
+	Color c;
+	c.r = data->diffuseColor.x;
+	c.g = data->diffuseColor.y;
+	c.b = data->diffuseColor.z;
+	c.a = data->diffuseColor.w;
+
+	return c;
 }

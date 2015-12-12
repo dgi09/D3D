@@ -3,18 +3,21 @@
 #include "ISelectable.h"
 #include "IMoveable.h"
 #include "Scene.h"
-#include "PointLightSection.h"
+#include "DirectLightSection.h"
 
 
-class EditorPointLight : public IEditorSceneObject, public ISelectable, public IMoveable
+class EditorDirectLight : public IEditorSceneObject, public ISelectable, public IMoveable
 {
-	PointLightPtr ptr;
+	DirectionalLightPtr ptr;
 	StaticEntityPtr sphere;
 	StaticEntityPtr bbox;
 
-	PointLightSection * plSection;
+	DirectLightSection * dlSection;
+
+	Vector3 pos, pointTo;
+
 public:
-	EditorPointLight(PointLightPtr ptr);
+	EditorDirectLight(Vector3 pos, Vector3 pointTo);
 
 	void OnAdd();
 	void OnRemove();
@@ -27,5 +30,5 @@ public:
 
 private:
 
-	void OnPLSectionChange(PointLightSectionChange ch);
+	void OnDLSectionChange(DirectLightSectionChange ch);
 };

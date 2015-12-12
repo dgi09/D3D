@@ -561,7 +561,7 @@
                         </object>
                         <object class="propGridItem" expanded="1">
                             <property name="help"></property>
-                            <property name="label">SpecIntesity</property>
+                            <property name="label">SpecIntensity</property>
                             <property name="name">specInt</property>
                             <property name="permission">public</property>
                             <property name="type">Float</property>

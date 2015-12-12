@@ -1,17 +1,20 @@
 #include "PropertiesPanel.h"
 
-wxSizer * PropertiesPanel::sizer = nullptr;
+wxPanel * PropertiesPanel::panel = nullptr;
 
-void PropertiesPanel::SetSizer(wxSizer * s)
+void PropertiesPanel::SetPanel(wxPanel * p)
 {
-	sizer = s;
+	panel = p;
 }
 void PropertiesPanel::Clear()
 {
-	sizer->Clear();
+	wxWindowList list = panel->GetChildren();
+	list.clear();
+	panel->GetSizer()->Clear(true);
+	
 }
 void PropertiesPanel::Add(wxWindow * window)
 {
-	sizer->Add(window);
-	sizer->RecalcSizes();
+	panel->GetSizer()->Add(window);
+	panel->GetSizer()->Layout();
 }

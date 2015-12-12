@@ -40,7 +40,8 @@ class WX_MainForm : public wxFrame
 		wxPanel* pnlCreateBar;
 		wxButton* btnCreateStaticEntity;
 		wxButton* btnCreateAnimatedEntity;
-		wxButton* btnCreateLight;
+		wxButton* btnCreatePointLight;
+		wxButton* btnCreateDirLight;
 		wxPanel* pnlPropBar;
 	
 	public:

@@ -12,6 +12,7 @@
 #include "PropertiesPanel.h"
 #include "ProperySectionsManager.h"
 #include "EditorPointLight.h"
+#include "EditorDirectLight.h"
 
 MainForm::MainForm()
 {
@@ -39,7 +40,8 @@ void MainForm::Init()
 	wxPanel * propPanel = (wxPanel*)wxForm->FindWindowByName(wxString("pnlPropBar"));
 	wxSizer * propSizer = propPanel->GetSizer();
 
-	PropertiesPanel::SetSizer(propSizer);
+
+	PropertiesPanel::SetPanel(propPanel);
 	PropertySectionsManager::SetParent(propPanel);
 
 	InitScene();
@@ -47,8 +49,11 @@ void MainForm::Init()
 	wxButton * btnAddStaticEntity = (wxButton*)wxForm->FindWindowByName(wxString("btnCreateStaticEntity"));
 	btnAddStaticEntity->Bind(wxEVT_LEFT_DOWN,&MainForm::OnAddStaticEntity_Click,this);
 
-	wxButton * btnAddLight = (wxButton*)wxForm->FindWindowByName(wxString("btnCreateLight"));
-	btnAddLight->Bind(wxEVT_LEFT_DOWN, &MainForm::OnAddLight_Click, this);
+	wxButton * btnAddLight = (wxButton*)wxForm->FindWindowByName(wxString("btnCreatePointLight"));
+	btnAddLight->Bind(wxEVT_LEFT_DOWN, &MainForm::OnAddPointLight_Click, this);
+
+	wxButton * btnAddDirLight = (wxButton*)wxForm->FindWindowByName(wxString("btnCreateDirLight"));
+	btnAddDirLight->Bind(wxEVT_LEFT_DOWN, &MainForm::OnAddDirLight_Click, this);
 }
 
 void MainForm::Show()
@@ -93,7 +98,7 @@ void MainForm::OnAddStaticEntity_Click(wxMouseEvent &evt)
 
 }
 
-void MainForm::OnAddLight_Click(wxMouseEvent & evt)
+void MainForm::OnAddPointLight_Click(wxMouseEvent & evt)
 {
 	PointLightPtr ptr = scene->AddPointLight();
 	PointLight * p = ptr.Get();
@@ -104,6 +109,13 @@ void MainForm::OnAddLight_Click(wxMouseEvent & evt)
 	EditorPointLight * pl = new EditorPointLight(ptr);
 	EditorSceneObjectsManager::GetPtr()->AddElement(pl);
 
+	ActiveTool::Set(new SelectTool());
+}
+
+void MainForm::OnAddDirLight_Click(wxMouseEvent & evt)
+{
+	EditorDirectLight * dl = new EditorDirectLight(Vector3(0.0f, 0.0f, 0.0f), Vector3(0.0f, -1.0f, 0.0f));
+	EditorSceneObjectsManager::GetPtr()->AddElement(dl);
 	ActiveTool::Set(new SelectTool());
 }
 
@@ -125,7 +137,7 @@ void MainForm::InitScene()
 	Camera * cam = camPtr.Get();
 
 
-	cam->SetPosition(0.0f,90.0f,-130.0f);
+	cam->SetPosition(0.0f,0.0f,-130.0f);
 	cam->LookAt(0.0f,0.0f,0.0f);
 	cam->SetNearDistance(2.0f);
 	cam->SetFarDistance(10000.0f);

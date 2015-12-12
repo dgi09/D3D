@@ -25,10 +25,10 @@ WX_MaterialSection::WX_MaterialSection( wxWindow* parent, wxWindowID id, const w
 	propGridIllumination = new wxPropertyGrid(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxPG_SPLITTER_AUTO_CENTER);
 	Illumination = propGridIllumination->Append( new wxPropertyCategory( wxT("Illumination"), wxT("Illumination") ) ); 
 	illuminate = propGridIllumination->Append( new wxBoolProperty( wxT("Illuminate"), wxT("Illuminate") ) ); 
-	mainSizer->Add( propGridIllumination, 1, wxALL|wxEXPAND, 1 );
+	mainSizer->Add( propGridIllumination, 0, wxALL|wxEXPAND, 0 );
 	
 	m_staticline2 = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	mainSizer->Add( m_staticline2, 0, wxEXPAND, 5 );
+	mainSizer->Add( m_staticline2, 0, wxEXPAND, 0 );
 	
 	propGrid = new wxPropertyGrid(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxPG_SPLITTER_AUTO_CENTER);
 	propCategoryMat = propGrid->Append( new wxPropertyCategory( wxT("Material"), wxT("Material") ) ); 
@@ -37,7 +37,7 @@ WX_MaterialSection::WX_MaterialSection( wxWindow* parent, wxWindowID id, const w
 	diffColor = propGrid->Append( new wxColourProperty( wxT("DiffColor"), wxT("DiffColor") ) ); 
 	emmisive = propGrid->Append( new wxUIntProperty( wxT("Emmisive"), wxT("Emmisive") ) ); 
 	specular = propGrid->Append( new wxUIntProperty( wxT("Specular"), wxT("Specular") ) ); 
-	specInt = propGrid->Append( new wxFloatProperty( wxT("SpecIntesity"), wxT("SpecIntesity") ) ); 
+	specInt = propGrid->Append( new wxFloatProperty( wxT("SpecIntensity"), wxT("SpecIntensity") ) ); 
 	mainSizer->Add( propGrid, 1, wxEXPAND, 1 );
 	
 	

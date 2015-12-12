@@ -4,10 +4,10 @@
 
 class PropertiesPanel
 {
-	static wxSizer * sizer;
+	static wxPanel * panel;
 public:
 
-	static void SetSizer(wxSizer * s);
+	static void SetPanel(wxPanel * p);
 	static void Clear();
 	static void Add(wxWindow * window);
 };

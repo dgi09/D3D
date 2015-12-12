@@ -68,6 +68,10 @@ void EditorEntity::OnSelect()
 
 	EntityBase * base = entityBase->GetBase();
 
+
+	PropertiesPanel::Clear();
+
+
 	transformSection = PropertySectionsManager::GetTransformSection();
 	transformSection->SetPosition(base->GetPosition());
 	transformSection->SetRotation(base->GetRotation());
@@ -88,7 +92,7 @@ void EditorEntity::OnSelect()
 
 	materialSection->SetOnChangeCallback(std::bind(&EditorEntity::OnMaterialSectionChange, this, std::placeholders::_1));
 
-	PropertiesPanel::Clear();
+
 	PropertiesPanel::Add(transformSection->GetWXControl());
 	PropertiesPanel::Add(materialSection->GetWXControl());
 }

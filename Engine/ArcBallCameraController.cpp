@@ -84,7 +84,7 @@ void ArcBallCameraController::Update()
 		{
 			front = front.Normalize();
 			front = front * (verticalScroll * zoomAmount);
-			cam->Move(front.z,front.y,front.z);
+			cam->Move(front.x,front.y,front.z);
 		}
 
 		scroll = false;

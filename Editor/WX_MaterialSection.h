@@ -53,7 +53,7 @@ class WX_MaterialSection : public wxPanel
 		wxPGProperty* specular;
 		wxPGProperty* specInt;
 		
-		WX_MaterialSection( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 205,347 ), long style = wxTAB_TRAVERSAL ); 
+		WX_MaterialSection( wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 209,315 ), long style = wxTAB_TRAVERSAL ); 
 		~WX_MaterialSection();
 	
 };

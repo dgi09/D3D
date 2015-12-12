@@ -1,28 +1,31 @@
-#include "EditorPointLight.h"
+#include "EditorDirectLight.h"
 #include "MainScene.h"
 #include "Utils.h"
-#include <DirectXMath.h>
-#include "ActiveMoveable.h"
 #include "SelectableObjectsManager.h"
-#include "ProperySectionsManager.h"
+#include "ActiveMoveable.h"
 #include "PropertiesPanel.h"
+#include "ProperySectionsManager.h"
 
 
-EditorPointLight::EditorPointLight(PointLightPtr ptr)
+EditorDirectLight::EditorDirectLight(Vector3 pos, Vector3 pointTo)
 {
-	this->ptr = ptr;
+	this->pos = pos;
+	this->pointTo = pointTo;
 }
 
-void EditorPointLight::OnAdd()
+void EditorDirectLight::OnAdd()
 {
+
+	ptr = MainScene::Get()->AddDirectionalLight();
+	ptr.Get()->SetDirection((pointTo - pos).Normalize());
+	ptr.Get()->SetDiffuseColor(1.0f, 1.0f, 1.0f, 1.0f);
+
 	sphere = MainScene::Get()->AddStaticEntity("assets/sphere.smodel", "sphere");
 	StaticEntity * sph = sphere.Get();
-	sph->SetPosition(ptr.Get()->GetPosition());
+	sph->SetPosition(pos);
 	sph->SetRotation(0.0f, 0.0f, 0.0f);
 	sph->SetScale(5.0f, 5.0f, 5.0f);
 	sph->Illuminate(false);
-
-
 
 	bbox = Utils::CreateBBoxEntity(sph);
 	bbox.Get()->CalculateTransform(false);
@@ -30,21 +33,24 @@ void EditorPointLight::OnAdd()
 	Material * mat = bbox.Get()->GetMaterial(0);
 	mat->SetDiffuseColor(Color::Blue());
 
+	mat = sph->GetMaterial(0);
+	mat->SetDiffuseColor(Color::Red());
+
+
 	SelectableObjectsManager::GetPtr()->AddElement(this);
 	SelectableObjectsManager::GetPtr()->RawSelect(this);
 
 	ActiveMoveable::Set(this);
-
 }
-void EditorPointLight::OnRemove()
+void EditorDirectLight::OnRemove()
 {
 	Scene * scene = MainScene::Get();
 	scene->RemoveStaticEntity(sphere);
 	scene->RemoveStaticEntity(bbox);
-	scene->RemovePointLight(ptr);
+	scene->RemoveDirectionLight(ptr);
 }
 
-bool EditorPointLight::Select(Vector3 rayOrigin, Vector3 rayDirection)
+bool EditorDirectLight::Select(Vector3 rayOrigin, Vector3 rayDirection)
 {
 	using namespace DirectX;
 
@@ -72,7 +78,7 @@ bool EditorPointLight::Select(Vector3 rayOrigin, Vector3 rayDirection)
 
 	return bbox.RayIntersact(org, dir);
 }
-void EditorPointLight::OnSelect()
+void EditorDirectLight::OnSelect()
 {
 	bbox.Get()->SetVisible(true);
 	ActiveMoveable::Set(this);
@@ -80,47 +86,51 @@ void EditorPointLight::OnSelect()
 	PropertiesPanel::Clear();
 
 
-	plSection = PropertySectionsManager::GetPointLightSection();
-	plSection->SetDiffuse(ptr.Get()->GetDiffuse());
-	plSection->SetPosition(ptr.Get()->GetPosition());
-	plSection->SetRange(ptr.Get()->GetRange());
+	dlSection = PropertySectionsManager::GetDirectLightSection();
 
-	plSection->SetOnChangeCallback(std::bind(&EditorPointLight::OnPLSectionChange, this, std::placeholders::_1));
-	
-	PropertiesPanel::Add(plSection->GetWXControl());
+	dlSection->SetDiffuse(ptr.Get()->GetDiffuseAsColor());
+	dlSection->SetPosition(pos);
+	dlSection->SetPointTo(pointTo);
+
+	dlSection->SetOnChangeCallback(std::bind(&EditorDirectLight::OnDLSectionChange, this, std::placeholders::_1));
+
+	PropertiesPanel::Clear();
+	PropertiesPanel::Add(dlSection->GetWXControl());
 }
-void EditorPointLight::OnFocusOut()
+void EditorDirectLight::OnFocusOut()
 {
 	bbox.Get()->SetVisible(false);
 }
 
-void EditorPointLight::Move(Vector3 offset)
+void EditorDirectLight::Move(Vector3 offset)
 {
-	PointLight * p = ptr.Get();
-	Vector3 pos = p->GetPosition();
-	p->SetPosition(pos + offset);
+	DirectionalLight * p = ptr.Get();
+	pos = pos + offset;
+	p->SetDirection((pointTo - pos).Normalize());
 
 	sphere.Get()->Move(offset.x, offset.y, offset.z);
 
 	bbox.Get()->SetTransform(sphere.Get()->GetWorldMatrix());
 }
 
-void EditorPointLight::OnPLSectionChange(PointLightSectionChange ch)
+void EditorDirectLight::OnDLSectionChange(DirectLightSectionChange ch)
 {
-	switch (ch)
+	switch(ch)
 	{
-		case PLSC_POSITION:
-			ptr.Get()->SetPosition(plSection->GetPosition());
-			break;
-		case PLSC_DIFFUSE:
-		{
-			Color d = plSection->GetDiffuse();
-
-			ptr.Get()->SetDiffuse(d.r, d.g, d.b, 1.0f);
-			break;
-		}
-		case PLSC_RANGE:
-			ptr.Get()->SetRange(plSection->GetRange());
-			break;
+	case DLSC_POSITION:
+	{
+		pos = dlSection->GetPosition();
+		ptr.Get()->SetDirection((pointTo - pos).Normalize());
+		break;
+	}
+	case DLSC_POINTTO:
+	{
+		pointTo = dlSection->GetPointTo();
+		ptr.Get()->SetDirection((pointTo - pos).Normalize());
+		break;
+	}
+	case DLSC_DIFFUSE:
+		ptr.Get()->SetDiffuseColor(dlSection->GetDiffuse());
+		break;
 	}
 }

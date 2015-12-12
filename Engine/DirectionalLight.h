@@ -5,6 +5,7 @@
 #include "DLData.h"
 #include <DirectXMath.h>
 #include "TexturePtr.h"
+#include "Color.h"
 
 class EXPORT Scene;
 class EXPORT DeviceDependableFactory;
@@ -21,6 +22,11 @@ public:
 	void SetDirection(float x,float y,float z);
 	void SetDiffuseColor(float r,float g,float b,float a);
 	void SetDiffuseColor(Vector4 color);
+	void SetDiffuseColor(Color color);
+
+	Vector3 GetDirection();
+	Vector4 GetDiffuseAsVector();
+	Color GetDiffuseAsColor();
 private:
 	friend class Scene;
 	void Init();

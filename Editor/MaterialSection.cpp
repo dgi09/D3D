@@ -1,5 +1,6 @@
 #include "MaterialSection.h"
 #include <string>
+#include "Utils.h"
 
 MaterialSection::MaterialSection(wxWindow * parent)
 {
@@ -57,24 +58,15 @@ Color MaterialSection::GetDiffuseColor()
 	wxColor col;
 	col << colVar;
 	
-	Color c;
-	c.r = (float)col.Red() / 255.0f;
-	c.g = (float)col.Green() / 255.0f;
-	c.b = (float)col.Blue() / 255.0f;
+	Color c = Utils::WxColourToColor(col);
 
 	return c;
 }
 void MaterialSection::SetDiffuseColor(Color color)
 {
 	wxVariant colVar;
-	wxColor col;
-
-	unsigned int r = (int)(255.0f * color.r);
-	unsigned int g = (int)(255.0f * color.g);
-	unsigned int b = (int)(255.0f * color.b);
-
-	col.Set(r, g, b);
-
+	
+	wxColour col = Utils::ColorToWxColour(color);
 	colVar << col;
 	wx_materialSection->diffColor->SetValue(colVar);
 }

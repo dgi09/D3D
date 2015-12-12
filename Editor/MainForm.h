@@ -29,6 +29,7 @@ private:
 	void DrawPanel_KeyboardEvent(KeyboardEvent & evt);
 
 	void OnAddStaticEntity_Click(wxMouseEvent &evt);
-	void OnAddLight_Click(wxMouseEvent & evt);
+	void OnAddPointLight_Click(wxMouseEvent & evt);
+	void OnAddDirLight_Click(wxMouseEvent & evt);
 
 };

@@ -32,8 +32,11 @@ WX_MainForm::WX_MainForm( wxWindow* parent, wxWindowID id, const wxString& title
 	btnCreateAnimatedEntity = new wxButton( pnlCreateBar, wxID_ANY, wxT("Animated Entity"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, wxT("btnCreateAnimatedEntity") );
 	bMain->Add( btnCreateAnimatedEntity, 0, wxALL|wxEXPAND, 3 );
 	
-	btnCreateLight = new wxButton( pnlCreateBar, wxID_ANY, wxT("Light"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, wxT("btnCreateLight") );
-	bMain->Add( btnCreateLight, 0, wxALL|wxEXPAND, 5 );
+	btnCreatePointLight = new wxButton( pnlCreateBar, wxID_ANY, wxT("Point Light"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, wxT("btnCreatePointLight") );
+	bMain->Add( btnCreatePointLight, 0, wxALL|wxEXPAND, 5 );
+	
+	btnCreateDirLight = new wxButton( pnlCreateBar, wxID_ANY, wxT("Directional Light"), wxDefaultPosition, wxDefaultSize, 0, wxDefaultValidator, wxT("btnCreateDirLight") );
+	bMain->Add( btnCreateDirLight, 0, wxALL|wxEXPAND, 5 );
 	
 	
 	pnlCreateBar->SetSizer( bMain );
