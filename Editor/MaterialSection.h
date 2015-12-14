@@ -10,6 +10,8 @@ enum MaterialSectionChange
 	MSC_SUBSET = 0,
 	MSC_ILLUMINATE,
 	MSC_USEDIFFUSE_TEXTURE,
+	MSC_USE_BUMP,
+	MSC_BUMP_TEXTURE,
 	MSC_DIFFUSE_COLOR,
 	MSC_DIFFUSE_TEXTURE,
 	MSC_EMMISIVE,
@@ -33,6 +35,11 @@ public:
 	void SetIlluminate(bool val);
 	bool GetIlluminate();
 
+	void UseBumpMap(bool val);
+	bool GetUseBumpMap();
+
+
+	std::string GetBumpTexture();
 	std::string GetDiffuseTexture();
 	
 	Color GetDiffuseColor();

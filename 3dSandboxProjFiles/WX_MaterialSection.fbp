@@ -42,7 +42,7 @@
             <property name="minimum_size"></property>
             <property name="name">WX_MaterialSection</property>
             <property name="pos"></property>
-            <property name="size">209,315</property>
+            <property name="size">209,343</property>
             <property name="subclass"></property>
             <property name="tooltip"></property>
             <property name="window_extra_style"></property>
@@ -544,6 +544,20 @@
                             <property name="name">diffColor</property>
                             <property name="permission">public</property>
                             <property name="type">Colour</property>
+                        </object>
+                        <object class="propGridItem" expanded="1">
+                            <property name="help"></property>
+                            <property name="label">UseBump</property>
+                            <property name="name">useBump</property>
+                            <property name="permission">public</property>
+                            <property name="type">Bool</property>
+                        </object>
+                        <object class="propGridItem" expanded="1">
+                            <property name="help"></property>
+                            <property name="label">BumpMap</property>
+                            <property name="name">bumpMap</property>
+                            <property name="permission">public</property>
+                            <property name="type">File</property>
                         </object>
                         <object class="propGridItem" expanded="1">
                             <property name="help"></property>

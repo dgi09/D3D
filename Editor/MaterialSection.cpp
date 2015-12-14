@@ -38,6 +38,23 @@ bool MaterialSection::GetUseDiffuse()
 	return wx_materialSection->useDiffuse->GetValue().GetBool();
 }
 
+
+void MaterialSection::UseBumpMap(bool val)
+{
+	wx_materialSection->useBump->SetValue(wxVariant(val));
+}
+bool MaterialSection::GetUseBumpMap()
+{
+	return wx_materialSection->useBump->GetValue().GetBool();
+}
+
+
+std::string MaterialSection::GetBumpTexture()
+{
+	return wx_materialSection->bumpMap->GetValue().GetString().c_str().AsChar();
+}
+
+
 void MaterialSection::SetIlluminate(bool val)
 {
 	wx_materialSection->illuminate->SetValue(wxVariant(val));
@@ -131,6 +148,14 @@ void MaterialSection::OnMaterialChange(wxPropertyGridEvent & evt)
 		else if (name == "DiffColor")
 		{
 			onChangeCallback(MSC_DIFFUSE_COLOR);
+		}
+		else if (name == "UseBump")
+		{
+			onChangeCallback(MSC_USE_BUMP);
+		}
+		else if (name == "BumpMap")
+		{
+			onChangeCallback(MSC_BUMP_TEXTURE);
 		}
 		else if (name == "Emmisive")
 		{

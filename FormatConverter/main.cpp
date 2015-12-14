@@ -55,11 +55,11 @@ std::string getExtention(std::string full)
 
 int main(int argc, char *argv[])
 {
-	if(argc < 2)
-		return 0;
+	//if(argc < 2)
+		//return 0;
 	
 	
-	std::string arg = argv[1];//"C:\\Users\\dgi\\Desktop\\fc\\dog.dae";//argv[1];
+	std::string arg = "E:\\D3D\\D3D\\assets\\dino\\Triceratop.obj";//argv[1];
 
 	std::string name = getFileName(arg);
 

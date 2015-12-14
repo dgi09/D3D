@@ -89,6 +89,7 @@ void EditorEntity::OnSelect()
 	materialSection->SetIlluminate(base->IsIlluminated());
 	materialSection->SetSpecular(mat->GetSpecularPower());
 	materialSection->SetSpecularIntesity(mat->GetSpecularIntensity());
+	materialSection->UseBumpMap(mat->IsUsingBumpMap());
 
 	materialSection->SetOnChangeCallback(std::bind(&EditorEntity::OnMaterialSectionChange, this, std::placeholders::_1));
 
@@ -157,6 +158,17 @@ void EditorEntity::OnMaterialSectionChange(MaterialSectionChange ch)
 		break;
 	case MSC_DIFFUSE_TEXTURE:
 		GetCurrentMat()->SetDiffuseMap(materialSection->GetDiffuseTexture().c_str());
+		break;
+	case MSC_USE_BUMP:
+	{
+		GetCurrentMat()->UseBumpMap(materialSection->GetUseBumpMap());
+		std::string map = materialSection->GetBumpTexture();
+		if (!map.empty())
+			GetCurrentMat()->SetBumpMap(map.c_str());
+	}
+	break;
+	case MSC_BUMP_TEXTURE:
+		GetCurrentMat()->SetBumpMap(materialSection->GetBumpTexture().c_str());
 		break;
 	case MSC_ILLUMINATE:
 		entityBase->GetBase()->Illuminate(materialSection->GetIlluminate());

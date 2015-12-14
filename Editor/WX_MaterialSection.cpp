@@ -35,6 +35,8 @@ WX_MaterialSection::WX_MaterialSection( wxWindow* parent, wxWindowID id, const w
 	useDiffuse = propGrid->Append( new wxBoolProperty( wxT("UseDiffuse"), wxT("UseDiffuse") ) ); 
 	diffTexture = propGrid->Append( new wxFileProperty( wxT("DiffTexture"), wxT("DiffTexture") ) ); 
 	diffColor = propGrid->Append( new wxColourProperty( wxT("DiffColor"), wxT("DiffColor") ) ); 
+	useBump = propGrid->Append( new wxBoolProperty( wxT("UseBump"), wxT("UseBump") ) ); 
+	bumpMap = propGrid->Append( new wxFileProperty( wxT("BumpMap"), wxT("BumpMap") ) ); 
 	emmisive = propGrid->Append( new wxUIntProperty( wxT("Emmisive"), wxT("Emmisive") ) ); 
 	specular = propGrid->Append( new wxUIntProperty( wxT("Specular"), wxT("Specular") ) ); 
 	specInt = propGrid->Append( new wxFloatProperty( wxT("SpecIntensity"), wxT("SpecIntensity") ) ); 

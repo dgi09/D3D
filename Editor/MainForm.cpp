@@ -82,6 +82,7 @@ void MainForm::OnAddStaticEntity_Click(wxMouseEvent &evt)
 			Material * mat = en->GetMaterial(i);
 			mat->UseDiffuseMap(false);
 			mat->SetDiffuseColor(Color::White());
+			mat->UseBumpMap(false);
 
 			mat->SetEmmisivePower(1);
 			mat->SetSpecularPower(1);

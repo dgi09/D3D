@@ -44,14 +44,16 @@ PS_OUTPUT main(PS_INPUT input)
 
 	float4 texelColor;
 
-#ifdef BUMPMAPPING
-	float4 bumpColor = bump_map.Sample(bump_sampler,input.uv);
-	bumpColor = (2.0f * bumpColor) - 1.0f;
 
-	float3 biTangent = cross(input.normal,input.tangent);
-	float3x3 tangentSpace = float3x3(input.tangent,biTangent,input.normal);
-	input.normal = mul(input.normal,(float3)bumpColor);
-#endif
+	if (matOptions & 4 == 4)
+	{
+		float4 bumpColor = bump_map.Sample(WrapSampler, input.uv);
+		bumpColor = (2.0f * bumpColor) - 1.0f;
+
+		float3 biTangent = cross(input.normal, input.tangent);
+		float3x3 tangentSpace = float3x3(input.tangent, biTangent, input.normal);
+		input.normal = mul(input.normal, (float3)bumpColor);
+	}
 
 	if(matOptions & 1 == 1)
 	{

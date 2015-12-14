@@ -75,7 +75,7 @@ float4 GetDirLightColor(DirLight light,float3 normal,float3 vertPos,uint specInt
 	float4 final = light.diffuseColor * intensity;
 
 	float3 toEye = normalize(cameraPosition - vertPos);
-	float3 halfWay = toEye + invDir;
+	float3 halfWay = normalize(toEye + invDir);
 	float specFactor = saturate(dot(halfWay,normal));
 	final += light.diffuseColor * pow(specFactor,specPower) * specInt;
 
